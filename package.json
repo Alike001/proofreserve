@@ -16,6 +16,8 @@
     "worker:test": "tsx --test worker/test/*.test.ts",
     "worker:typecheck": "tsc --noEmit",
     "risk:assess": "tsx risk/src/cli.ts",
+    "risk:preview": "tsx risk/src/agent-cli.ts preview",
+    "risk:submit": "tsx risk/src/agent-cli.ts submit",
     "risk:test": "tsx --test risk/test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run typecheck && pnpm run worker:test && pnpm run risk:test"
