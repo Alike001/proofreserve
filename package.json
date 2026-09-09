@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build:contracts": "forge build",
-    "test:contracts": "forge test",
+    "test:contracts": "forge test --force",
     "worker:enqueue": "tsx worker/src/cli.ts enqueue",
     "worker:run": "tsx worker/src/cli.ts run",
     "worker:test": "tsx --test worker/test/*.test.ts",
@@ -20,6 +20,7 @@
   "dependencies": {
     "@gluwa/asc-contracts": "0.2.1",
     "@gluwa/usc-sdk": "0.18.0",
+    "@openzeppelin/contracts": "5.4.0",
     "ethers": "6.17.0"
   },
   "devDependencies": {

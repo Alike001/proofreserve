@@ -8,7 +8,7 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 
 ## Status
 
-The product specification and first local vertical slice are complete: an original source loan book, an Attestcoin-compatible Creditcoin evidence receiver, and a durable proof queue. Testnet deployments are not yet claimed.
+The product specification and two local vertical slices are complete: an original source loan book, an Attestcoin-compatible Creditcoin evidence receiver, a durable proof queue, a bounded reserve controller, and a test-asset lending pool with real capacity enforcement. Testnet deployments are not yet claimed.
 
 ## Trust boundary
 
@@ -26,7 +26,7 @@ pnpm install
 pnpm check
 ```
 
-Current local verification: 16 Solidity tests pass and the TypeScript worker passes strict type-checking.
+Current local verification: 24 Solidity tests and the worker restart/idempotence test pass; the TypeScript worker also passes strict type-checking.
 
 No paid AI API will be required. The default risk model will run locally through Ollama.
 
@@ -34,6 +34,7 @@ No paid AI API will be required. The default risk model will run locally through
 
 - [MVP product specification](./docs/product-spec.md)
 - [Build slice](./docs/build-slice-01.md)
+- [Reserve enforcement slice](./docs/build-slice-02.md)
 - [Third-party notices](./THIRD_PARTY_NOTICES.md)
 
 The no-paid-API promise applies to AI inference. Testnet deployments still need a wallet that can sign transactions and faucet funds for Sepolia and CC3 gas; no private key should ever be committed or pasted into an issue or chat.
