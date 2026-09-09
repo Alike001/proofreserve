@@ -48,6 +48,12 @@ After copying all deployed addresses into .env, run:
 
 This registers three demonstration borrowers on both chains. Two borrowers deliberately share one group so the risk agent can detect correlated deterioration rather than treating every late payment as an isolated event. The command also mints and deposits 100 prUSD into the Creditcoin pool. It is safe to rerun when the existing configuration matches.
 
+Capture the pool's normal-state capacity before publishing stress evidence:
+
+    pnpm capacity:check before
+
+This is a read-only `eth_call` made as the pool owner. It does not create a commitment or require a private key. The command records the pool/controller state and simulates the configured 70 prUSD request against the actual `commitLoan` function in `deployments/capacity-before.json`. In the intended initial state the contract allows the request because 90 prUSD is lendable.
+
 ## 5. Publish the source-chain stress scenario
 
     pnpm scenario:stress
@@ -72,6 +78,12 @@ Run the full local suite, then inspect the deployed bytecode and public manifest
     pnpm risk:submit
 
 The Creditcoin contract independently checks the evidence epoch, model and policy versions, confidence floor, reserve band, agent identity, and replay protection. The AI cannot directly transfer assets or invent a reserve percentage.
+
+Capture the enforced post-decision capacity:
+
+    pnpm capacity:check after
+
+The same read-only contract simulation should now record `BLOCKED` in `deployments/capacity-after.json`: the STRESS policy protects 40 prUSD, leaves 60 prUSD lendable, and the pool's own `InsufficientLendable` error rejects the 70 prUSD request.
 
 ## 7. Verify before operating
 

@@ -17,6 +17,7 @@ Six local slices are implemented: an original source loan book and Attestcoin-co
 3. Let Attestcoin prove each fact and its checkpoint into Creditcoin.
 4. Let Gemini explain the combined risk pattern within a closed schema.
 5. Submit the assessment so the controller raises the protected reserve from 10% to 40%.
+6. Compare `pnpm capacity:check before` and `pnpm capacity:check after` to show the pool itself allowing and then blocking the same 70 prUSD request without mutating demo state.
 
 In one sentence: **ProofReserve notices verified trouble elsewhere and makes a Creditcoin lending pool keep more cash safe.**
 
