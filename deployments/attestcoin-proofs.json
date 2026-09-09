@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "sourceChainId": 11155111,
+  "sourceChainKey": 1,
+  "creditcoinChainId": 102031,
+  "sourceLoanBook": "0xD5CC39ab46B923Cc4F40CB919BE971c0529b0A4b",
+  "evidenceRegistry": "0xCd144E5C8FCB6b9b9C4fddC55C660A131C99659a",
+  "checkpointEpoch": 1,
+  "checkpointRoot": "0x89e111fc3fd81620221c994b8ec9e754d35a977ab2ea2813809ea233ecd20e06",
+  "proofs": [
+    {
+      "action": "PAYMENT_SETTLED",
+      "sourceTransactionHash": "0x17bebbb2667fd011af35f8fde76f0f51b59f57a0f0066d687b929f27a8b9cfd7",
+      "sourceBlock": 11671062,
+      "queryId": "0xfeb80ce12c872fac26f29d7323c52b33b75152cad2af8c71b39dc17b77f7ddad",
+      "creditcoinTransactionHash": "0xbb2357e273a0f54d07cf14b50c8afe43a7748abc656c336d4ef8b02ff738697d",
+      "creditcoinBlock": 5460350
+    },
+    {
+      "action": "PAYMENT_SETTLED",
+      "sourceTransactionHash": "0x4be5211a82fac3221ba0fbcaf27b56b5dd954208a9907a689bf0890a316565d2",
+      "sourceBlock": 11671064,
+      "queryId": "0xc7c6d1e9674f12c2d96bc6b06e637778f2c70599185f5a4eb69620721a68ce9e",
+      "creditcoinTransactionHash": "0x4170ff70a1397f6ac383d22d9fba40ed7e3d8446ce7f00ed3fb1a454a25c4582",
+      "creditcoinBlock": 5460351
+    },
+    {
+      "action": "PAYMENT_SETTLED",
+      "sourceTransactionHash": "0x19cae9e2800dc8627f638b0ee1cbd6c42a7097794902c6858e39cfd11b780161",
+      "sourceBlock": 11671066,
+      "queryId": "0xb1de4e80d4ea247b4bdd0d76e12abcdeea1c2a35e8857d46dd26606e5bf97b55",
+      "creditcoinTransactionHash": "0xccf385747c77e92e8a240f1cf3a755d5536f3818bffaace18b5a55b6724aef1e",
+      "creditcoinBlock": 5460352
+    },
+    {
+      "action": "PAYMENT_SETTLED",
+      "sourceTransactionHash": "0x1e7720cf2570e1a9fc3e6ffbf49d9e53cae92f8f7541c92623c5bc1b3c26ca66",
+      "sourceBlock": 11671068,
+      "queryId": "0x5219efe2bfc0181162388637dde8e7f8b55c7d7460ba8f5b01b9fb351101b389",
+      "creditcoinTransactionHash": "0xde4b9cee0c8b7af433d90dc64d818becb7de10c4dd92e1b67101d0c7c2c83ac8",
+      "creditcoinBlock": 5460353
+    },
+    {
+      "action": "PAYMENT_LATE",
+      "sourceTransactionHash": "0x8400a9dba6cbe28a39a40fca2ae81d15993d62b1c83ff94642d29b976238df5c",
+      "sourceBlock": 11671070,
+      "queryId": "0x48161218a1cd4fc5547ca29942e1c289eaead43df9694a4abd6691adc396d5d9",
+      "creditcoinTransactionHash": "0x990f0604e499a9714d49ad6ea7a27984cfa888af09957c4326ff81720053db36",
+      "creditcoinBlock": 5460354
+    },
+    {
+      "action": "PAYMENT_LATE",
+      "sourceTransactionHash": "0x7ee56ae314dde6e647bc2a8890f4a3c1aa7bc1971cb23d130085709f74744b7e",
+      "sourceBlock": 11671072,
+      "queryId": "0xf56c15f703eb07e6a11b7111206e07cec36395341bdf350127097c9b86958195",
+      "creditcoinTransactionHash": "0x932addb4fa262230acee3112599d1d97411f3fd8f013018531cc41e1f1bec5db",
+      "creditcoinBlock": 5460359
+    },
+    {
+      "action": "PORTFOLIO_CHECKPOINT",
+      "sourceTransactionHash": "0x73ad73bb4bc990e84328951f79c1d0827b91263f87d9218c6672567b75227489",
+      "sourceBlock": 11671073,
+      "queryId": "0x1fb7d9aab2d7c69f5918fe205244ac4bcb682aaded3e8a4cd696bb4dc6718f1b",
+      "creditcoinTransactionHash": "0x7aea93dd9cb3f47de845bb8c66b791fd1fb4226e68fa1e9102b0546995f50d93",
+      "creditcoinBlock": 5460360
+    }
+  ]
+}

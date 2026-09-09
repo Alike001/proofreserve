@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "environment": "ethereum-sepolia",
+  "chainId": 11155111,
+  "sourceChainKey": 1,
+  "portfolioLabel": "proofreserve-demo-v1",
+  "portfolioId": "0x5da0382070fc14e51c84ffcc8b30a705a64b12f7bc4adb46f1651ef00a587db0",
+  "deployer": "0x60720931CA8224aC6534c3152f9f89Ce51B2E584",
+  "contracts": {
+    "sourceLoanBook": {
+      "address": "0xD5CC39ab46B923Cc4F40CB919BE971c0529b0A4b",
+      "transactionHash": "0x051c4838c86ad08d2fa5a46e8b652c1c5d15e5e2484bfdc43963f970b673c1ab",
+      "blockNumber": 11671010
+    }
+  }
+}

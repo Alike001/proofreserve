@@ -1,5 +1,15 @@
 # Plan: ProofReserve Hackathon Submission Completion
 
+## Progress — 2026-09-10
+
+- Phase 1, product claim: complete.
+- Phase 2, public Sepolia/CC3 deployment: complete.
+- Phase 3, seven-proof Attestcoin path: complete.
+- Phase 4, reviewed Gemini artifact and Creditcoin enforcement: complete.
+- Phase 5, live dashboard connection and final browser QA: in progress.
+- Phase 6, self-service pool creation: deferred until the judged path and submission assets are finished.
+- Phase 7, submission package: pending.
+
 ## Inputs
 
 - Hackathon requirement: every submission must use Attestcoin as a meaningful, functional core feature and run on a testnet.

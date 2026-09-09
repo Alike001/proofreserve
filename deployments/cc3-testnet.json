@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "environment": "creditcoin-cc3-testnet",
+  "chainId": 102031,
+  "sourceChainKey": 1,
+  "portfolioLabel": "proofreserve-demo-v1",
+  "portfolioId": "0x5da0382070fc14e51c84ffcc8b30a705a64b12f7bc4adb46f1651ef00a587db0",
+  "deployer": "0x7a490B6b4079E90C228d5CABb58bbedc9a51312b",
+  "sourceEmitter": "0xD5CC39ab46B923Cc4F40CB919BE971c0529b0A4b",
+  "riskAgent": "0xfB919Fd59612C8fA0320E7B2b9B8D4C4E04e467f",
+  "contracts": {
+    "evidence": {
+      "address": "0xCd144E5C8FCB6b9b9C4fddC55C660A131C99659a",
+      "transactionHash": "0xb1d88a52e2be5183e9e90d1ed76e7457df86f51c7cbcce73abdaaab5ed304d6b",
+      "blockNumber": 5460272
+    },
+    "controller": {
+      "address": "0xd7D5e7d923407B9D4c40ec275F0a6AA6D87C6be9",
+      "transactionHash": "0xd3a953099f7676b1015068565d5a044df300b85ddc8dd328751d8465bde93c2c",
+      "blockNumber": 5460273
+    },
+    "testAsset": {
+      "address": "0x447cE53AEC6c1BA488a07b21C96afBd22f540e12",
+      "transactionHash": "0xe46d1a888f5183b447574ca0c2855d5a4da5f269f26d5f2cc19aa8743153a6b6",
+      "blockNumber": 5460274
+    },
+    "pool": {
+      "address": "0x8305921B241cAEC35750d9532B22210802e9714D",
+      "transactionHash": "0x23f621cc3162812b42f2296f33e035dd383e06a46a31916fce1b4bed92e5bfd2",
+      "blockNumber": 5460275
+    }
+  },
+  "evidenceDeploymentBlock": 5460272,
+  "policy": {
+    "reserveBands": [
+      1000,
+      2000,
+      4000,
+      6000
+    ],
+    "minimumModelConfidenceBps": 6000,
+    "decreaseDelaySeconds": 86400,
+    "modelVersion": "0x8224e260817643b519dcd1a0108f6d786246dd4cad7b83839f6d822a4f01182a",
+    "policyVersion": "0x42fdf84787ed679a63ee622154d4d257b051068b1ff1153e912653e95f45c5e6"
+  }
+}

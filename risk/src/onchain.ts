@@ -1,10 +1,11 @@
 import {Contract, EventLog, JsonRpcProvider, Wallet, getAddress} from "ethers";
 
-import {assessPortfolio} from "./assess.js";
+import {assessPortfolio, validateRiskAssessment} from "./assess.js";
 import {RiskAgentConfig} from "./agent-config.js";
 import {PortfolioFeatures, RiskAssessment} from "./domain.js";
 import {AcceptedFact, PortfolioSnapshot, buildPortfolioFeatures} from "./features.js";
 import {GeminiClient} from "./gemini.js";
+import {canonicalJson} from "./policy.js";
 
 const EVIDENCE_ABI = [
   "function currentEpoch() view returns (uint64)",
@@ -70,6 +71,7 @@ export class OnchainRiskAgent {
   }
 
   async submit(prepared: PreparedOnchainAssessment): Promise<AssessmentSubmission> {
+    await this.validatePrepared(prepared);
     if (!this.config.agentPrivateKey) throw new Error("RISK_AGENT_PRIVATE_KEY is required for submission");
     const signer = new Wallet(this.config.agentPrivateKey, this.provider);
     const controller = new Contract(this.config.reserveControllerAddress, CONTROLLER_ABI, signer);
@@ -104,6 +106,17 @@ export class OnchainRiskAgent {
     const receipt = await transaction.wait(this.config.confirmations);
     if (!receipt || receipt.status !== 1) throw new Error("Creditcoin assessment transaction failed");
     return {transactionHash: transaction.hash, blockNumber: receipt.blockNumber};
+  }
+
+  async validatePrepared(prepared: PreparedOnchainAssessment): Promise<void> {
+    if (!Number.isSafeInteger(prepared.observedBlock) || prepared.observedBlock <= 0) {
+      throw new Error("prepared assessment has an invalid observed block");
+    }
+    validateRiskAssessment(prepared.features, prepared.assessment);
+    const canonicalFeatures = await this.collectFeatures(prepared.features.epoch, prepared.observedBlock);
+    if (canonicalJson(canonicalFeatures) !== canonicalJson(prepared.features)) {
+      throw new Error("prepared features do not match canonical Creditcoin state at the observed block");
+    }
   }
 
   private async latestClosedEpoch(blockTag: number): Promise<number> {

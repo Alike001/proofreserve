@@ -1,0 +1,39 @@
+{
+  "observedBlock": 5460381,
+  "features": {
+    "schemaVersion": 1,
+    "epoch": 1,
+    "evidenceRoot": "0x89e111fc3fd81620221c994b8ec9e754d35a977ab2ea2813809ea233ecd20e06",
+    "evidenceCount": 6,
+    "settledCount": 4,
+    "settledValue": "400000000000000000000",
+    "lateCount": 2,
+    "lateValue": "200000000000000000000",
+    "lossCount": 0,
+    "lossValue": "0",
+    "deterioratingBorrowers": 2,
+    "maxDeterioratingBorrowersInOneGroup": 2,
+    "groupConcentrationBps": 10000,
+    "utilizationBps": 0,
+    "evidenceAgeSeconds": 897
+  },
+  "assessment": {
+    "regime": "STRESS",
+    "regimeIndex": 2,
+    "reserveBps": 4000,
+    "confidenceBps": 8500,
+    "epoch": 1,
+    "reasonCodes": [
+      "CORRELATED_LATENESS",
+      "GROUP_CONCENTRATION"
+    ],
+    "reasonCodesHash": "0xee47b662b630365fd048a326db95c4c4038fcb8788429d6c7b49cc5868d68a7c",
+    "evidenceRoot": "0x89e111fc3fd81620221c994b8ec9e754d35a977ab2ea2813809ea233ecd20e06",
+    "featureHash": "0x1dbbfbdeca121382a383cace2c07909f121cee534c67ff993777997d3f90b090",
+    "modelVersion": "0x8224e260817643b519dcd1a0108f6d786246dd4cad7b83839f6d822a4f01182a",
+    "policyVersion": "0x42fdf84787ed679a63ee622154d4d257b051068b1ff1153e912653e95f45c5e6",
+    "decisionHash": "0xb175c10a378672153f0f5dda21ffa7eb078883a54254b7190debc37dec3a5d3b",
+    "inferenceMode": "GEMINI",
+    "rationale": "Out of 6 total evidence items, 2 are late representing 200000000000000000000 base units. Both deteriorating borrowers belong to the same group, resulting in 10000 bps group concentration."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "label": "after",
+  "chainId": 102031,
+  "blockNumber": 5460384,
+  "pool": "0x8305921B241cAEC35750d9532B22210802e9714D",
+  "reserveController": "0xd7D5e7d923407B9D4c40ec275F0a6AA6D87C6be9",
+  "borrower": "0x000000000000000000000000000000000000B001",
+  "regime": "STRESS",
+  "reserveBps": 4000,
+  "activeEpoch": 1,
+  "activeEvidenceRoot": "0x89e111fc3fd81620221c994b8ec9e754d35a977ab2ea2813809ea233ecd20e06",
+  "financialState": {
+    "liquidAssets": "100.0",
+    "managedAssets": "100.0",
+    "totalCommitments": "0.0",
+    "principalOutstanding": "0.0",
+    "lockedReserve": "40.0",
+    "lendable": "60.0"
+  },
+  "request": {
+    "amount": "70.0",
+    "allowedByContract": false,
+    "outcome": "BLOCKED",
+    "rejection": {
+      "name": "InsufficientLendable",
+      "availableBaseUnits": "60000000000000000000",
+      "requestedBaseUnits": "70000000000000000000"
+    }
+  }
+}

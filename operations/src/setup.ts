@@ -1,3 +1,5 @@
+import {readFile} from "node:fs/promises";
+
 import {Contract, getAddress, id, parseUnits} from "ethers";
 
 import {
@@ -31,6 +33,51 @@ const POOL_ABI = [
   "function totalManagedAssets() view returns (uint256)",
   "function deposit(uint256 amount)"
 ];
+
+interface ExistingSetupManifest {
+  sourceLoanBook?: unknown;
+  evidenceRegistry?: unknown;
+  pool?: unknown;
+  testAsset?: unknown;
+  poolSeedBaseUnits?: unknown;
+  transactions?: unknown;
+}
+
+async function existingTransactions(
+  manifestPath: string,
+  identity: {
+    sourceLoanBook: string;
+    evidenceRegistry: string;
+    pool: string;
+    testAsset: string;
+    poolSeedBaseUnits: string;
+  }
+): Promise<TransactionRecord[]> {
+  let existing: ExistingSetupManifest;
+  try {
+    existing = JSON.parse(await readFile(manifestPath, "utf8")) as ExistingSetupManifest;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw new Error(`cannot read existing setup manifest ${manifestPath}`, {cause: error});
+  }
+
+  const sameAddress = (left: unknown, right: string): boolean =>
+    typeof left === "string" && left.toLowerCase() === right.toLowerCase();
+  if (
+    !sameAddress(existing.sourceLoanBook, identity.sourceLoanBook) ||
+    !sameAddress(existing.evidenceRegistry, identity.evidenceRegistry) ||
+    !sameAddress(existing.pool, identity.pool) ||
+    !sameAddress(existing.testAsset, identity.testAsset) ||
+    existing.poolSeedBaseUnits !== identity.poolSeedBaseUnits
+  ) {
+    throw new Error(`existing setup manifest ${manifestPath} belongs to a different deployment`);
+  }
+  if (!Array.isArray(existing.transactions)) {
+    throw new Error(`existing setup manifest ${manifestPath} has no transaction history`);
+  }
+
+  return existing.transactions as TransactionRecord[];
+}
 
 const borrowers = configuredBorrowers().map(getAddress);
 if (borrowers.length !== 3 || new Set(borrowers).size !== 3) {
@@ -153,17 +200,42 @@ if (managedAssets === 0n) {
 }
 
 const manifestPath = process.env.SETUP_MANIFEST?.trim() || "deployments/setup.json";
+const sourceLoanBookAddress = await source.getAddress();
+const evidenceRegistryAddress = await evidence.getAddress();
+const identity = {
+  sourceLoanBook: sourceLoanBookAddress,
+  evidenceRegistry: evidenceRegistryAddress,
+  pool: poolAddress,
+  testAsset: await asset.getAddress(),
+  poolSeedBaseUnits: seedAmount.toString()
+};
+const previousTransactions = await existingTransactions(manifestPath, identity);
+const recordedTransactions = [...previousTransactions, ...transactions].filter(
+  (transaction, index, all) =>
+    all.findIndex(({transactionHash}) => transactionHash === transaction.transactionHash) === index
+);
 await writeManifest(manifestPath, {
   schemaVersion: 1,
   sourceChainId: sourceContext.chainId,
   creditcoinChainId: creditcoinContext.chainId,
-  sourceLoanBook: await source.getAddress(),
-  evidenceRegistry: await evidence.getAddress(),
+  sourceLoanBook: sourceLoanBookAddress,
+  evidenceRegistry: evidenceRegistryAddress,
   pool: poolAddress,
-  testAsset: await asset.getAddress(),
+  testAsset: identity.testAsset,
   borrowers: borrowers.map((borrower, index) => ({borrower, groupId: groups[index]})),
   poolSeedBaseUnits: seedAmount.toString(),
-  transactions
+  transactions: recordedTransactions
 });
 
-console.log(JSON.stringify({manifestPath, borrowerCount: borrowers.length, transactions}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      manifestPath,
+      borrowerCount: borrowers.length,
+      transactions,
+      recordedTransactionCount: recordedTransactions.length
+    },
+    null,
+    2
+  )
+);

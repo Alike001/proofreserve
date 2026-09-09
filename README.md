@@ -8,7 +8,7 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 
 ## Status
 
-Six local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, a Gemini-backed risk engine with a deterministic safety floor, an evidence-to-reserve agent that reconstructs features from Creditcoin before submitting, repeatable deployment/demo operations, and a responsive judge-facing dashboard. A live schema-bound Gemini inference was verified on 2026-09-09; public testnet deployments are not yet claimed.
+The complete MVP is live on Ethereum Sepolia and Creditcoin CC3 Testnet. Seven source transactions have been proven through Attestcoin and accepted on Creditcoin, a reviewed Gemini `STRESS` assessment has been enforced, and the pool now rejects the same 70 prUSD request it allowed before the reserve change. See the [public testnet evidence](docs/testnet-evidence.md) for contracts and transaction links.
 
 ## Demonstration flow
 
@@ -64,7 +64,7 @@ pnpm check
 pnpm preflight:testnet
 ```
 
-Current local verification: 25 Solidity tests, one worker restart/idempotence test, and fourteen risk-engine tests pass; all TypeScript passes strict type-checking.
+Current local verification: 25 Solidity tests, one worker restart/idempotence test, and sixteen risk-engine tests pass; all TypeScript passes strict type-checking.
 
 Live AI inference uses the Gemini Developer API and requires a server-side `GEMINI_API_KEY`. The selected model is available on Google's free tier, so a paid AI account is not required for the hackathon within current quotas. If the key, network, or quota is unavailable, the risk engine fails safely to its deterministic baseline; a live Gemini call is still required to demonstrate the AI integration.
 
@@ -78,6 +78,7 @@ Create a new auth key in [Google AI Studio](https://aistudio.google.com/app/apik
 - [Gemini risk engine slice](./docs/build-slice-03.md)
 - [Evidence-to-reserve agent slice](./docs/build-slice-04.md)
 - [Testnet deployment guide](./docs/deployment.md)
+- [Public testnet evidence](./docs/testnet-evidence.md)
 - [Third-party notices](./THIRD_PARTY_NOTICES.md)
 
 Keep the Gemini key in the server-side environment only. Free-tier prompts may be used by Google to improve its products, so ProofReserve sends only public testnet aggregate features and no personal borrower data. Testnet deployments separately need a wallet that can sign transactions and faucet funds for Sepolia and CC3 gas; neither secret should ever be committed or pasted into an issue or chat.

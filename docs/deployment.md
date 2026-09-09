@@ -79,11 +79,11 @@ Run the full local suite, then inspect the deployed bytecode and public manifest
 
     pnpm risk:preview
 
-`risk:preview` will not sign a transaction. It reconstructs the accepted facts, asks Gemini for a constrained assessment, and shows the exact assessment the controller would receive. After checking it:
+`risk:preview` will not sign a transaction. It reconstructs the accepted facts, asks Gemini for a constrained assessment, and writes the exact reviewed assessment to `deployments/risk-assessment.json`. After checking it:
 
     pnpm risk:submit
 
-The Creditcoin contract independently checks the evidence epoch, model and policy versions, confidence floor, reserve band, agent identity, and replay protection. The AI cannot directly transfer assets or invent a reserve percentage.
+`risk:submit` reads that saved artifact instead of calling Gemini again. It recomputes the artifact hashes, reconstructs the canonical features at its pinned Creditcoin block, and refuses a deterministic fallback by default. The Creditcoin contract then independently checks the evidence epoch, model and policy versions, confidence floor, reserve band, agent identity, and replay protection. The AI cannot directly transfer assets or invent a reserve percentage.
 
 Capture the enforced post-decision capacity:
 
@@ -99,4 +99,6 @@ Run the full local suite before any deployment and again before recording the de
 
 ## Current verification
 
-Both deployment scripts were exercised against a disposable local EVM chain. The smoke test deployed the source loan book, evidence registry, reserve controller, test asset, and pool, and produced both manifests. No Sepolia or CC3 deployment is claimed until public testnet transaction hashes exist.
+The complete flow was executed publicly on 2026-09-10. The source loan book is deployed on Sepolia; the evidence registry, reserve controller, test asset, and pool are deployed on CC3. Six payment facts—four settled and two late—plus their checkpoint were processed as seven native Attestcoin proofs, a reviewed Gemini `STRESS` assessment was submitted, the protected reserve moved from 10% to 40%, and the pool rejected a 70 prUSD request after allowing it in the normal state.
+
+See [the public testnet evidence](./testnet-evidence.md) and the machine-readable JSON files under `deployments/` for addresses, source transactions, proof acceptances, decision artifacts, and before/after capacity snapshots.

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "label": "before",
+  "chainId": 102031,
+  "blockNumber": 5460299,
+  "pool": "0x8305921B241cAEC35750d9532B22210802e9714D",
+  "reserveController": "0xd7D5e7d923407B9D4c40ec275F0a6AA6D87C6be9",
+  "borrower": "0x000000000000000000000000000000000000B001",
+  "regime": "NORMAL",
+  "reserveBps": 1000,
+  "activeEpoch": 0,
+  "activeEvidenceRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "financialState": {
+    "liquidAssets": "100.0",
+    "managedAssets": "100.0",
+    "totalCommitments": "0.0",
+    "principalOutstanding": "0.0",
+    "lockedReserve": "10.0",
+    "lendable": "90.0"
+  },
+  "request": {
+    "amount": "70.0",
+    "allowedByContract": true,
+    "outcome": "ALLOWED",
+    "rejection": null
+  }
+}

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {assessPortfolio} from "../src/assess.js";
+import {assessPortfolio, validateRiskAssessment} from "../src/assess.js";
 import {ModelCandidate, PortfolioFeatures} from "../src/domain.js";
 
 const ROOT = `0x${"22".repeat(32)}`;
@@ -102,4 +102,25 @@ test("unavailable hosted model falls back safely", async () => {
   assert.equal(result.regime, "STRESS");
   assert.equal(result.inferenceMode, "DETERMINISTIC_FALLBACK");
   assert.match(result.decisionHash, /^0x[0-9a-f]{64}$/);
+});
+
+test("a prepared Gemini assessment validates against its exact features", async () => {
+  const input = features();
+  const result = await assessPortfolio(
+    input,
+    model({regime: "NORMAL", confidenceBps: 9_000, reasonCodes: ["HEALTHY_REPAYMENT"], rationale: "Healthy."})
+  );
+  assert.doesNotThrow(() => validateRiskAssessment(input, result));
+});
+
+test("a tampered prepared assessment is rejected before submission", async () => {
+  const input = features();
+  const result = await assessPortfolio(
+    input,
+    model({regime: "NORMAL", confidenceBps: 9_000, reasonCodes: ["HEALTHY_REPAYMENT"], rationale: "Healthy."})
+  );
+  assert.throws(
+    () => validateRiskAssessment({...input, evidenceAgeSeconds: input.evidenceAgeSeconds + 1}, result),
+    /feature hash mismatch/
+  );
 });

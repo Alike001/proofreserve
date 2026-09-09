@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "sourceChainId": 11155111,
+  "creditcoinChainId": 102031,
+  "sourceLoanBook": "0xD5CC39ab46B923Cc4F40CB919BE971c0529b0A4b",
+  "evidenceRegistry": "0xCd144E5C8FCB6b9b9C4fddC55C660A131C99659a",
+  "pool": "0x8305921B241cAEC35750d9532B22210802e9714D",
+  "testAsset": "0x447cE53AEC6c1BA488a07b21C96afBd22f540e12",
+  "borrowers": [
+    {
+      "borrower": "0x000000000000000000000000000000000000B001",
+      "groupId": "0x53f5a080d81a8980db17d8ae70f325f1b88f9e92d7706025b5bec6a341ed8eed"
+    },
+    {
+      "borrower": "0x000000000000000000000000000000000000B002",
+      "groupId": "0x53f5a080d81a8980db17d8ae70f325f1b88f9e92d7706025b5bec6a341ed8eed"
+    },
+    {
+      "borrower": "0x000000000000000000000000000000000000b003",
+      "groupId": "0x3f7a50be678d3e103aeeef08b0242eee0b3dd48d9082376d03cb556f1c778ec0"
+    }
+  ],
+  "poolSeedBaseUnits": "100000000000000000000",
+  "transactions": [
+    {
+      "action": "register source borrower 1",
+      "transactionHash": "0x8787a6bb3a223e96fd5d921227c5806f4b8e56648910ee94bedb540f151a1bcb",
+      "blockNumber": 11671033
+    },
+    {
+      "action": "register source borrower 2",
+      "transactionHash": "0xb2ee9b11d85e040cbb85f716792099cb66b42f2b512c50c226ed44acd86d2b17",
+      "blockNumber": 11671034
+    },
+    {
+      "action": "register source borrower 3",
+      "transactionHash": "0xd4d8c0c70dd8eaf33d6eb897300c63eede8681a81cec54367f048d21bb4aab56",
+      "blockNumber": 11671035
+    },
+    {
+      "action": "register evidence borrower 1",
+      "transactionHash": "0x5fa9d9c90c0a8518b33260967ca4305ef7cef5868cd1d72bfd078a36dc26d44e",
+      "blockNumber": 5460291
+    },
+    {
+      "action": "register evidence borrower 2",
+      "transactionHash": "0x827eac31d7d7efb9e81b373331703b90f152836818de7afebc4f38f3466a088a",
+      "blockNumber": 5460292
+    },
+    {
+      "action": "register evidence borrower 3",
+      "transactionHash": "0xea1133057e1b2eaa4c458c48c10ffd47a1063e34663285a4134785a03061f715",
+      "blockNumber": 5460293
+    },
+    {
+      "action": "mint pool seed assets",
+      "transactionHash": "0xd7f51f4893ace58ff50c20f212fb4d9aeb414fedbce51141ba88386ea0a81827",
+      "blockNumber": 5460294
+    },
+    {
+      "action": "approve pool seed assets",
+      "transactionHash": "0x155346aa0eefd7588f2591e2666b5ff5c69be112659d9d3f9ad05cb973d1036d",
+      "blockNumber": 5460295
+    },
+    {
+      "action": "deposit pool seed assets",
+      "transactionHash": "0xf46d13ab73c90fdf83729577a33a4f45a5bbdb092405a4bd4b81918b36ddee6d",
+      "blockNumber": 5460296
+    }
+  ]
+}
