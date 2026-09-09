@@ -26,7 +26,7 @@ contract ReserveControllerAndPoolTest {
     address private constant AGENT = address(0xA11);
     address private constant PROVIDER = address(0x1A);
     address private constant BORROWER = address(0xB0B);
-    bytes32 private constant MODEL_VERSION = keccak256("ollama-model-v1");
+    bytes32 private constant MODEL_VERSION = keccak256("proofreserve-risk-engine-v1");
     bytes32 private constant POLICY_VERSION = keccak256("reserve-policy-v1");
     bytes32 private constant ROOT_1 = keccak256("checkpoint-1");
     bytes32 private constant ROOT_2 = keccak256("checkpoint-2");
@@ -88,6 +88,27 @@ contract ReserveControllerAndPoolTest {
         vm.expectPartialRevert(ReserveController.ReserveOutsidePolicy.selector);
         vm.prank(AGENT);
         controller.submitAssessment(invalid);
+    }
+
+    function testDecisionDigestMatchesTypeScriptRiskFixture() public view {
+        ReserveController.Assessment memory assessment = ReserveController.Assessment({
+            regime: ReserveController.Regime.Stress,
+            reserveBps: 4_000,
+            confidenceBps: 10_000,
+            epoch: 1,
+            reasonCodesHash: 0xee47b662b630365fd048a326db95c4c4038fcb8788429d6c7b49cc5868d68a7c,
+            evidenceRoot: 0x2222222222222222222222222222222222222222222222222222222222222222,
+            featureHash: 0x4567079d8e428f9751a400108635910714d500501058ce7c0454e89b4b931308,
+            modelVersion: 0x8224e260817643b519dcd1a0108f6d786246dd4cad7b83839f6d822a4f01182a,
+            policyVersion: 0x42fdf84787ed679a63ee622154d4d257b051068b1ff1153e912653e95f45c5e6,
+            decisionHash: bytes32(0)
+        });
+
+        require(
+            controller.assessmentDigest(assessment)
+                == 0x269434e78ee65e1b72743e06fa33f99c299362a56fa045acf120c8e57ef8bb5d,
+            "TypeScript/Solidity digest mismatch"
+        );
     }
 
     function testDecisionCannotBeReplayed() public {

@@ -15,7 +15,10 @@
     "worker:run": "tsx worker/src/cli.ts run",
     "worker:test": "tsx --test worker/test/*.test.ts",
     "worker:typecheck": "tsc --noEmit",
-    "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run worker:typecheck && pnpm run worker:test"
+    "risk:assess": "tsx risk/src/cli.ts",
+    "risk:test": "tsx --test risk/test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run typecheck && pnpm run worker:test && pnpm run risk:test"
   },
   "dependencies": {
     "@gluwa/asc-contracts": "0.2.1",

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "epoch": 1,
+  "evidenceRoot": "0x2222222222222222222222222222222222222222222222222222222222222222",
+  "evidenceCount": 6,
+  "settledCount": 4,
+  "settledValue": "600000000000000000000",
+  "lateCount": 2,
+  "lateValue": "200000000000000000000",
+  "lossCount": 0,
+  "lossValue": "0",
+  "deterioratingBorrowers": 2,
+  "maxDeterioratingBorrowersInOneGroup": 2,
+  "groupConcentrationBps": 7500,
+  "utilizationBps": 7900,
+  "evidenceAgeSeconds": 60
+}
