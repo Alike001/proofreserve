@@ -1,14 +1,14 @@
 # ProofReserve
 
-> Protect a lending pool before defaults spread.
+> Protected lending pools powered by verified cross-chain risk.
 
-ProofReserve turns Attestcoin-verified borrower events from other chains into an AI-recommended safety reserve that Creditcoin contracts enforce.
+ProofReserve is a Creditcoin DeFi application for operating lending pools that protect liquidity before borrower problems spread. It turns Attestcoin-verified borrower events from other chains into an AI-recommended safety reserve that Creditcoin contracts enforce.
 
 A pool with 100 test tokens may normally protect 10 and lend 90. When several related borrowers become late on Ethereum Sepolia, Attestcoin proves those events, Gemini identifies the portfolio pattern, and the Creditcoin controller can protect 40 instead. The AI cannot move funds or override contract policy.
 
 ## Status
 
-Five local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, a Gemini-backed risk engine with a deterministic safety floor, an evidence-to-reserve agent that reconstructs features from Creditcoin before submitting, and repeatable deployment/demo operations. A live schema-bound Gemini inference was verified on 2026-09-09; public testnet deployments are not yet claimed.
+Six local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, a Gemini-backed risk engine with a deterministic safety floor, an evidence-to-reserve agent that reconstructs features from Creditcoin before submitting, repeatable deployment/demo operations, and a responsive judge-facing dashboard. A live schema-bound Gemini inference was verified on 2026-09-09; public testnet deployments are not yet claimed.
 
 ## Demonstration flow
 
@@ -21,6 +21,18 @@ Five local slices are implemented: an original source loan book and Attestcoin-c
 In one sentence: **ProofReserve notices verified trouble elsewhere and makes a Creditcoin lending pool keep more cash safe.**
 
 See [the deployment and demo runbook](docs/deployment.md) for guarded commands and required testnet configuration.
+
+## Why Attestcoin is essential
+
+A Creditcoin contract cannot independently know whether a borrower paid late on Sepolia. A normal web API could report that event, but the pool would have to trust the API operator. Attestcoin supplies cryptographic proof that the source transaction belongs to the attested chain history. ProofReserve then validates the exact loan-book emitter, event type, borrower, group, sequence, epoch, and replay state before the fact may influence the pool.
+
+Without Attestcoin, ProofReserve would be a lending pool trusting a centralized risk-data service. With Attestcoin, the evidence behind a reserve decision can be verified from public chain data.
+
+## Product boundary
+
+The hackathon MVP operates one fully verifiable protected pool. Repeatable self-service creation of additional pools is a product roadmap step and will not be presented as shipped unless its factory and onboarding path are deployed and tested.
+
+`prUSD` is a test asset used to make the financial consequence visible. ProofReserve does not issue a production stablecoin and is not a generic token-creation platform.
 
 ## Product dashboard
 

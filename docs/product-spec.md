@@ -4,6 +4,8 @@
 
 ProofReserve protects a Creditcoin lending pool before cross-chain borrower problems spread. Attestcoin supplies proven facts, Gemini interprets interacting portfolio signals, and Creditcoin contracts retain final authority over the financial consequence.
 
+The product direction is a Creditcoin application through which lending operators can run protected pools under the same proof-to-enforcement model. The hackathon MVP proves that model with one complete pool; it does not depend on a token factory or stablecoin issuer.
+
 ## User and outcome
 
 The primary user is a lending-pool manager or risk operator. They configure a pool and an allowlisted external loan book, then monitor how much liquidity is protected and how much remains lendable.
@@ -56,6 +58,8 @@ Sepolia lifecycle event
 - Consumer credit decisions, KYC, or regulated reserve claims.
 - Global or complete credit-history claims.
 - Attestcoin Writability, bridging, tokenomics, a DAO, or a chatbot-first experience.
+- Stablecoin issuance, generic token creation, or claims that `prUSD` is production money.
+- A self-service multi-pool factory unless it is completed only after the mandatory public proof-to-enforcement path.
 - Any paid AI tier required for hackathon reproduction.
 
 ## Definition of done
