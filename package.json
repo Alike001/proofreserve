@@ -1,0 +1,31 @@
+{
+  "name": "proofreserve",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Attestcoin-verified, AI-interpreted liquidity reserve controls for Creditcoin lending pools",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:contracts": "forge build",
+    "test:contracts": "forge test",
+    "worker:enqueue": "tsx worker/src/cli.ts enqueue",
+    "worker:run": "tsx worker/src/cli.ts run",
+    "worker:test": "tsx --test worker/test/*.test.ts",
+    "worker:typecheck": "tsc --noEmit",
+    "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run worker:typecheck && pnpm run worker:test"
+  },
+  "dependencies": {
+    "@gluwa/asc-contracts": "0.2.1",
+    "@gluwa/usc-sdk": "0.18.0",
+    "ethers": "6.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.0",
+    "tsx": "4.22.4",
+    "typescript": "6.0.2"
+  },
+  "packageManager": "pnpm@10.33.1"
+}
