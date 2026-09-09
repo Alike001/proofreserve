@@ -39,6 +39,7 @@ Create a new auth key in [Google AI Studio](https://aistudio.google.com/app/apik
 - [Reserve enforcement slice](./docs/build-slice-02.md)
 - [Gemini risk engine slice](./docs/build-slice-03.md)
 - [Evidence-to-reserve agent slice](./docs/build-slice-04.md)
+- [Testnet deployment guide](./docs/deployment.md)
 - [Third-party notices](./THIRD_PARTY_NOTICES.md)
 
 Keep the Gemini key in the server-side environment only. Free-tier prompts may be used by Google to improve its products, so ProofReserve sends only public testnet aggregate features and no personal borrower data. Testnet deployments separately need a wallet that can sign transactions and faucet funds for Sepolia and CC3 gas; neither secret should ever be committed or pasted into an issue or chat.

@@ -11,5 +11,5 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["worker/**/*.ts", "risk/**/*.ts"]
+  "include": ["deployment/**/*.ts", "worker/**/*.ts", "risk/**/*.ts"]
 }
