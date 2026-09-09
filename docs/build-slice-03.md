@@ -1,21 +1,21 @@
-# Build Slice 03: Local Risk Engine
+# Build Slice 03: Gemini Risk Engine
 
 ## Outcome
 
-Typed portfolio features become a contract-compatible assessment without relying on a paid AI API or giving a model financial authority.
+Typed portfolio features become a contract-compatible assessment through Gemini's free tier without giving a model financial authority.
 
 ## Decision design
 
 The risk engine has two layers:
 
 1. a deterministic safety baseline catches explicit loss, correlated lateness, low evidence, and high utilization; and
-2. a small Ollama model may confirm that regime or raise it after reasoning about interactions such as concentration plus payment volatility near high utilization.
+2. Gemini may confirm that regime or raise it after reasoning about interactions such as concentration plus payment volatility near high utilization.
 
-The model can never lower the deterministic baseline. If Ollama is absent, times out, returns malformed JSON, uses an unknown reason code, or has confidence below policy, the baseline becomes the final assessment.
+The model can never lower the deterministic baseline. If the Gemini key is missing, the request times out, free quota is exhausted, output is malformed, a reason code is unknown, or confidence is below policy, the baseline becomes the final assessment.
 
 ## Closed model output
 
-Ollama receives a JSON Schema and may return only:
+Gemini receives a JSON Schema and may return only:
 
 ```text
 regime
@@ -26,12 +26,14 @@ rationale
 
 The application—not the model—maps the regime to reserve basis points and computes the evidence-root binding, feature hash, model/policy version hashes, reason-code hash, and Solidity-compatible decision hash.
 
-## Free local path
+## Free-tier hosted path
 
-The client targets Ollama at `http://127.0.0.1:11434`. The initial low-resource model choice is `qwen2.5:1.5b-instruct-q4_K_M`, subject to an actual latency and schema-reliability benchmark on the development machine.
+The server-side client uses the official `@google/genai` SDK and the Gemini Interactions API. The default model is `gemini-3.8-flash`, selected because Google's current pricing page lists free input and output tokens for it. A `GEMINI_API_KEY` is required for live inference, but upgrading to a paid tier is not required within free-tier limits.
 
-No hosted AI key is needed. A blockchain signing key and faucet gas are still required later to submit assessments and deploy contracts; those are unrelated to AI billing.
+The key must stay in the worker environment and never enter the browser, repository, logs, or chat. Free-tier prompts may be used to improve Google's products, so the model receives only public testnet aggregates and identifiers—not personal or confidential borrower data.
+
+A blockchain signing key and faucet gas are separately required later to submit assessments and deploy contracts; those credentials are unrelated to the Gemini key or AI billing.
 
 ## Current gate
 
-The engine, safety behavior, hashes, and fallback are covered by tests. Ollama is not installed on the current machine, so a genuine local-model inference and benchmark remain open and are not represented as complete.
+The engine, schema request, safety behavior, hashes, missing-key behavior, and fallback are covered by tests. A genuine hosted inference remains open until the user configures a Gemini API key locally and is not represented as complete.

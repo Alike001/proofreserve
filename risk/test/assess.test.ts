@@ -43,7 +43,7 @@ test("healthy facts remain normal when model agrees", async () => {
   );
   assert.equal(result.regime, "NORMAL");
   assert.equal(result.reserveBps, 1_000);
-  assert.equal(result.inferenceMode, "OLLAMA");
+  assert.equal(result.inferenceMode, "GEMINI");
 });
 
 test("AI can raise a watch baseline when interacting signals justify stress", async () => {
@@ -67,7 +67,7 @@ test("AI can raise a watch baseline when interacting signals justify stress", as
   );
   assert.equal(result.regime, "STRESS");
   assert.equal(result.reserveBps, 4_000);
-  assert.equal(result.inferenceMode, "OLLAMA");
+  assert.equal(result.inferenceMode, "GEMINI");
 });
 
 test("AI cannot lower a deterministic crisis baseline", async () => {
@@ -90,7 +90,7 @@ test("AI cannot lower a deterministic crisis baseline", async () => {
   assert.equal(result.inferenceMode, "DETERMINISTIC_FALLBACK");
 });
 
-test("unavailable model falls back without a paid API", async () => {
+test("unavailable hosted model falls back safely", async () => {
   const input = features({
     settledCount: 4,
     lateCount: 2,
@@ -98,7 +98,7 @@ test("unavailable model falls back without a paid API", async () => {
     deterioratingBorrowers: 2,
     maxDeterioratingBorrowersInOneGroup: 2
   });
-  const result = await assessPortfolio(input, model(new Error("Ollama is offline")));
+  const result = await assessPortfolio(input, model(new Error("Gemini is unavailable")));
   assert.equal(result.regime, "STRESS");
   assert.equal(result.inferenceMode, "DETERMINISTIC_FALLBACK");
   assert.match(result.decisionHash, /^0x[0-9a-f]{64}$/);

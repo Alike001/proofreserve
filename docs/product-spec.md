@@ -2,7 +2,7 @@
 
 ## Objective
 
-ProofReserve protects a Creditcoin lending pool before cross-chain borrower problems spread. Attestcoin supplies proven facts, a local AI interprets interacting portfolio signals, and Creditcoin contracts retain final authority over the financial consequence.
+ProofReserve protects a Creditcoin lending pool before cross-chain borrower problems spread. Attestcoin supplies proven facts, Gemini interprets interacting portfolio signals, and Creditcoin contracts retain final authority over the financial consequence.
 
 ## User and outcome
 
@@ -14,7 +14,7 @@ The clearest acceptance scenario is:
 2. a 70-token loan request fits within its 90-token normal capacity;
 3. several related borrowers produce genuine late/loss events on Sepolia;
 4. Attestcoin proofs turn those receipts into typed Creditcoin facts;
-5. local AI detects correlated stress and recommends a policy-approved regime;
+5. Gemini detects correlated stress and recommends a policy-approved regime;
 6. the controller protects 40 tokens; and
 7. the same 70-token request now fails because only 60 remain lendable.
 
@@ -25,7 +25,7 @@ Sepolia lifecycle event
   -> Attestcoin inclusion + continuity proof
   -> typed Creditcoin evidence
   -> versioned portfolio features
-  -> local AI regime recommendation
+  -> Gemini regime recommendation
   -> deterministic policy checks
   -> locked reserve
   -> actual lending-capacity change
@@ -44,7 +44,7 @@ Sepolia lifecycle event
 - Ethereum Sepolia `SourceLoanBook` with three borrowers in two groups and at least six genuine lifecycle transactions.
 - Creditcoin CC3 `ProofReserveEvidence` using the native verifier at `0x0000000000000000000000000000000000000FD2`.
 - Durable worker queue using `@gluwa/usc-sdk` with retry and restart deduplication.
-- Versioned feature builder and small Ollama model with strict structured output.
+- Versioned feature builder and Gemini Developer API model with strict structured output.
 - Four finite reserve regimes: `NORMAL`, `WATCH`, `STRESS`, and `CRISIS`.
 - Reserve controller plus test-asset pool where reserve changes constrain actual loans.
 - Manager console and public evidence-to-decision verification view.
@@ -56,7 +56,7 @@ Sepolia lifecycle event
 - Consumer credit decisions, KYC, or regulated reserve claims.
 - Global or complete credit-history claims.
 - Attestcoin Writability, bridging, tokenomics, a DAO, or a chatbot-first experience.
-- Any hosted or paid AI dependency required for reproduction.
+- Any paid AI tier required for hackathon reproduction.
 
 ## Definition of done
 

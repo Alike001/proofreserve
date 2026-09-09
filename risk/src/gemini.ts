@@ -1,3 +1,5 @@
+import {GoogleGenAI} from "@google/genai";
+
 import {ModelCandidate, PortfolioFeatures, REASON_CODES, REGIMES} from "./domain.js";
 import {isReasonCode} from "./policy.js";
 
@@ -11,44 +13,65 @@ const RESPONSE_SCHEMA = {
     reasonCodes: {
       type: "array",
       minItems: 1,
-      uniqueItems: true,
       items: {type: "string", enum: REASON_CODES}
     },
-    rationale: {type: "string", minLength: 1, maxLength: 500}
+    rationale: {type: "string"}
   }
 } as const;
 
-export class OllamaClient {
+export interface GeminiInteractionRequest {
+  model: string;
+  input: string;
+  system_instruction: string;
+  response_format: {
+    type: "text";
+    mime_type: "application/json";
+    schema: typeof RESPONSE_SCHEMA;
+  };
+  store: false;
+}
+
+export type RunGeminiInteraction = (
+  request: GeminiInteractionRequest
+) => PromiseLike<{output_text?: string}>;
+
+export class GeminiClient {
+  private readonly runInteraction: RunGeminiInteraction;
+
   constructor(
-    private readonly model: string,
-    private readonly baseUrl = "http://127.0.0.1:11434",
-    private readonly fetchFn: typeof fetch = fetch
-  ) {}
+    apiKey: string | undefined,
+    private readonly model = "gemini-3.8-flash",
+    runInteraction?: RunGeminiInteraction
+  ) {
+    if (runInteraction) {
+      this.runInteraction = runInteraction;
+      return;
+    }
+
+    this.runInteraction = async (request) => {
+      if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
+      const client = new GoogleGenAI({apiKey});
+      const interaction = await client.interactions.create(request, {timeout: 20_000, maxRetries: 1});
+      return interaction.output_text ? {output_text: interaction.output_text} : {};
+    };
+  }
 
   async assess(features: PortfolioFeatures): Promise<ModelCandidate> {
-    const response = await this.fetchFn(`${this.baseUrl}/api/chat`, {
-      method: "POST",
-      headers: {"content-type": "application/json"},
-      body: JSON.stringify({
-        model: this.model,
-        stream: false,
-        format: RESPONSE_SCHEMA,
-        options: {temperature: 0},
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a conservative portfolio risk classifier. Use only the supplied typed facts. Identify interactions among repayment behavior, correlated group deterioration, loss, concentration, and utilization. Return only schema-valid JSON."
-          },
-          {role: "user", content: JSON.stringify(features)}
-        ]
-      })
+    const interaction = await this.runInteraction({
+      model: this.model,
+      store: false,
+      system_instruction:
+        "You are a conservative portfolio risk classifier. Use only the supplied typed facts. Identify interactions among repayment behavior, correlated group deterioration, loss, concentration, and utilization. Return only schema-valid JSON.",
+      input: JSON.stringify(features),
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: RESPONSE_SCHEMA
+      }
     });
-    if (!response.ok) throw new Error(`Ollama returned HTTP ${response.status}`);
 
-    const body = (await response.json()) as {message?: {content?: string}};
-    if (!body.message?.content) throw new Error("Ollama response did not contain message content");
-    return validateCandidate(JSON.parse(body.message.content) as unknown);
+    if (!interaction.output_text) throw new Error("Gemini response did not contain output text");
+    return validateCandidate(JSON.parse(interaction.output_text) as unknown);
   }
 }
 

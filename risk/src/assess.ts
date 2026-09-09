@@ -1,7 +1,7 @@
 import {AbiCoder, keccak256, toUtf8Bytes} from "ethers";
 
 import {ModelCandidate, PortfolioFeatures, Regime, ReservePolicy, RiskAssessment} from "./domain.js";
-import {OllamaClient} from "./ollama.js";
+import {GeminiClient} from "./gemini.js";
 import {
   DEFAULT_POLICY,
   canonicalJson,
@@ -13,7 +13,7 @@ import {
 
 export async function assessPortfolio(
   features: PortfolioFeatures,
-  client: Pick<OllamaClient, "assess">,
+  client: Pick<GeminiClient, "assess">,
   policy: ReservePolicy = DEFAULT_POLICY
 ): Promise<RiskAssessment> {
   validateFeatures(features);
@@ -39,7 +39,7 @@ export async function assessPortfolio(
     finalRegime = candidate.regime;
     reasonCodes = candidate.reasonCodes;
     confidenceBps = candidate.confidenceBps;
-    inferenceMode = "OLLAMA";
+    inferenceMode = "GEMINI";
     rationale = candidate.rationale;
   }
 

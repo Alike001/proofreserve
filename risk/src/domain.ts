@@ -50,7 +50,7 @@ export interface RiskAssessment {
   modelVersion: string;
   policyVersion: string;
   decisionHash: string;
-  inferenceMode: "OLLAMA" | "DETERMINISTIC_FALLBACK";
+  inferenceMode: "GEMINI" | "DETERMINISTIC_FALLBACK";
   rationale: string;
 }
 

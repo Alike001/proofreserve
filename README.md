@@ -8,7 +8,7 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 
 ## Status
 
-Three local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, and a local-first risk engine with a deterministic safety floor. Testnet deployments and a live Ollama inference run are not yet claimed.
+Three local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, and a Gemini-backed risk engine with a deterministic safety floor. Testnet deployments and a live Gemini inference run are not yet claimed.
 
 ## Trust boundary
 
@@ -26,19 +26,21 @@ pnpm install
 pnpm check
 ```
 
-Current local verification: 25 Solidity tests, one worker restart/idempotence test, and seven risk-engine tests pass; all TypeScript passes strict type-checking.
+Current local verification: 25 Solidity tests, one worker restart/idempotence test, and eight risk-engine tests pass; all TypeScript passes strict type-checking.
 
-No paid AI API will be required. The default risk model will run locally through Ollama.
+Live AI inference uses the Gemini Developer API and requires a server-side `GEMINI_API_KEY`. The selected model is available on Google's free tier, so a paid AI account is not required for the hackathon within current quotas. If the key, network, or quota is unavailable, the risk engine fails safely to its deterministic baseline; a live Gemini call is still required to demonstrate the AI integration.
+
+Create a new auth key in [Google AI Studio](https://aistudio.google.com/app/apikey), copy `.env.example` to the ignored `.env` file, and place the key there locally. Load that environment only into the server-side worker before running `pnpm risk:assess risk/fixtures/stress-features.json`. Never put the key in frontend code or paste it into chat.
 
 ## Documentation
 
 - [MVP product specification](./docs/product-spec.md)
 - [Build slice](./docs/build-slice-01.md)
 - [Reserve enforcement slice](./docs/build-slice-02.md)
-- [Local risk engine slice](./docs/build-slice-03.md)
+- [Gemini risk engine slice](./docs/build-slice-03.md)
 - [Third-party notices](./THIRD_PARTY_NOTICES.md)
 
-The no-paid-API promise applies to AI inference. Testnet deployments still need a wallet that can sign transactions and faucet funds for Sepolia and CC3 gas; no private key should ever be committed or pasted into an issue or chat.
+Keep the Gemini key in the server-side environment only. Free-tier prompts may be used by Google to improve its products, so ProofReserve sends only public testnet aggregate features and no personal borrower data. Testnet deployments separately need a wallet that can sign transactions and faucet funds for Sepolia and CC3 gas; neither secret should ever be committed or pasted into an issue or chat.
 
 ## Security notice
 

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {OllamaClient, validateCandidate} from "../src/ollama.js";
+import {GeminiClient, GeminiInteractionRequest, validateCandidate} from "../src/gemini.js";
 import {PortfolioFeatures} from "../src/domain.js";
 
 const FEATURES: PortfolioFeatures = {
@@ -49,29 +49,30 @@ test("strict candidate validation rejects unknown reason codes", () => {
   );
 });
 
-test("Ollama request carries a JSON schema and accepts structured output", async () => {
-  let requestBody: Record<string, unknown> | undefined;
-  const fetchMock: typeof fetch = async (_input, init) => {
-    requestBody = JSON.parse(String(init?.body)) as Record<string, unknown>;
-    return new Response(
-      JSON.stringify({
-        message: {
-          content: JSON.stringify({
-            regime: "WATCH",
-            confidenceBps: 8_000,
-            reasonCodes: ["HIGH_UTILIZATION"],
-            rationale: "Utilization is elevated."
-          })
-        }
-      }),
-      {status: 200, headers: {"content-type": "application/json"}}
-    );
+test("Gemini request carries a JSON schema and accepts structured output", async () => {
+  let request: GeminiInteractionRequest | undefined;
+  const runInteraction = async (input: GeminiInteractionRequest) => {
+    request = input;
+    return {
+      output_text: JSON.stringify({
+        regime: "WATCH",
+        confidenceBps: 8_000,
+        reasonCodes: ["HIGH_UTILIZATION"],
+        rationale: "Utilization is elevated."
+      })
+    };
   };
 
-  const client = new OllamaClient("tiny-model", "http://127.0.0.1:11434", fetchMock);
+  const client = new GeminiClient(undefined, "test-model", runInteraction);
   const result = await client.assess(FEATURES);
   assert.equal(result.regime, "WATCH");
-  assert.equal(requestBody?.model, "tiny-model");
-  assert.equal(requestBody?.stream, false);
-  assert.equal(typeof requestBody?.format, "object");
+  assert.equal(request?.model, "test-model");
+  assert.equal(request?.store, false);
+  assert.equal(request?.response_format.mime_type, "application/json");
+  assert.equal(request?.response_format.schema.additionalProperties, false);
+});
+
+test("Gemini client requires a server-side API key for live inference", async () => {
+  const client = new GeminiClient(undefined);
+  await assert.rejects(client.assess(FEATURES), /GEMINI_API_KEY/);
 });
