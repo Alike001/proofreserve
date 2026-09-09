@@ -28,6 +28,7 @@
     "risk:submit": "node --env-file-if-exists=.env --import tsx risk/src/agent-cli.ts submit",
     "risk:test": "tsx --test risk/test/*.test.ts",
     "typecheck": "tsc --noEmit",
+    "preflight:testnet": "node --env-file-if-exists=.env --import tsx deployment/src/preflight.ts",
     "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run typecheck && pnpm run worker:test && pnpm run risk:test && pnpm run app:build"
   },
   "dependencies": {

@@ -61,6 +61,7 @@ Requirements: Node.js 22+, pnpm 10+, and Foundry.
 ```bash
 pnpm install
 pnpm check
+pnpm preflight:testnet
 ```
 
 Current local verification: 25 Solidity tests, one worker restart/idempotence test, and fourteen risk-engine tests pass; all TypeScript passes strict type-checking.

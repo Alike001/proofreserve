@@ -21,6 +21,12 @@ The public address corresponding to the last key is supplied as RISK_AGENT_ADDRE
 
 Configure the RPC endpoints, dedicated testnet accounts, and RISK_AGENT_ADDRESS. Fund the source deployer with Sepolia test ETH and the Creditcoin deployer with CC3 test CTC.
 
+Validate every public endpoint, chain ID, signer role, balance, Attestcoin source-chain registration, and proof-builder response without sending a transaction:
+
+    pnpm preflight:testnet
+
+The preflight prints public addresses and testnet balances but never prints private keys. It also requires the Creditcoin deployer, Attestcoin worker, and risk agent to be separate accounts and verifies that `RISK_AGENT_ADDRESS` matches `RISK_AGENT_PRIVATE_KEY`.
+
 ## 2. Deploy the source loan book
 
     pnpm deploy:source
