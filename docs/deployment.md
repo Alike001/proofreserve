@@ -40,14 +40,44 @@ The command targets CC3 chain ID 102031 and writes deployments/cc3-testnet.json.
 
 The manifest also records the TestAsset address, model and policy hashes, reserve bands, agent address, source emitter, and every deployment transaction.
 
-## 4. Verify configuration before operating
+## 4. Register the demo portfolio and fund the pool
+
+After copying all deployed addresses into .env, run:
+
+    pnpm setup:testnet
+
+This registers three demonstration borrowers on both chains. Two borrowers deliberately share one group so the risk agent can detect correlated deterioration rather than treating every late payment as an isolated event. The command also mints and deposits 100 prUSD into the Creditcoin pool. It is safe to rerun when the existing configuration matches.
+
+## 5. Publish the source-chain stress scenario
+
+    pnpm scenario:stress
+
+This creates six Sepolia obligations, records four on-time settlements and two late payments from borrowers in the same group, then closes epoch 1. The resulting manifest contains the seven source transaction hashes that must be submitted to Attestcoin: six financial facts plus the checkpoint.
+
+Enqueue every value in `attestcoinSourceTransactionHashes`, in order:
+
+    pnpm worker:enqueue <source-transaction-hash>
+    pnpm worker:run
+
+The worker generates and verifies a native Attestcoin proof for each source transaction before the Creditcoin evidence contract accepts it. Repeat enqueue and run for all seven hashes.
+
+## 6. Preview and submit the reserve decision
 
 Run the full local suite, then inspect the deployed bytecode and public manifest values before registering borrowers or transferring test assets:
 
-    pnpm check
     pnpm risk:preview
 
-risk:preview will not sign a transaction. It requires at least one genuine finalized evidence checkpoint. risk:submit is the separate state-changing command.
+`risk:preview` will not sign a transaction. It reconstructs the accepted facts, asks Gemini for a constrained assessment, and shows the exact assessment the controller would receive. After checking it:
+
+    pnpm risk:submit
+
+The Creditcoin contract independently checks the evidence epoch, model and policy versions, confidence floor, reserve band, agent identity, and replay protection. The AI cannot directly transfer assets or invent a reserve percentage.
+
+## 7. Verify before operating
+
+Run the full local suite before any deployment and again before recording the demo:
+
+    pnpm check
 
 ## Current verification
 

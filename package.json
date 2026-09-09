@@ -13,6 +13,8 @@
     "test:contracts": "forge test --force",
     "deploy:source": "node --env-file-if-exists=.env --import tsx deployment/src/source.ts",
     "deploy:creditcoin": "node --env-file-if-exists=.env --import tsx deployment/src/creditcoin.ts",
+    "setup:testnet": "node --env-file-if-exists=.env --import tsx operations/src/setup.ts",
+    "scenario:stress": "node --env-file-if-exists=.env --import tsx operations/src/scenario.ts",
     "worker:enqueue": "node --env-file-if-exists=.env --import tsx worker/src/cli.ts enqueue",
     "worker:run": "node --env-file-if-exists=.env --import tsx worker/src/cli.ts run",
     "worker:test": "tsx --test worker/test/*.test.ts",

@@ -8,7 +8,19 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 
 ## Status
 
-Four local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, a Gemini-backed risk engine with a deterministic safety floor, and an evidence-to-reserve agent that reconstructs features from Creditcoin before submitting. A live schema-bound Gemini inference was verified on 2026-09-09; testnet deployments are not yet claimed.
+Five local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, a Gemini-backed risk engine with a deterministic safety floor, an evidence-to-reserve agent that reconstructs features from Creditcoin before submitting, and repeatable deployment/demo operations. A live schema-bound Gemini inference was verified on 2026-09-09; public testnet deployments are not yet claimed.
+
+## Demonstration flow
+
+1. Fund a 100 prUSD pool on Creditcoin.
+2. Record four healthy payments and two related late payments on Sepolia.
+3. Let Attestcoin prove each fact and its checkpoint into Creditcoin.
+4. Let Gemini explain the combined risk pattern within a closed schema.
+5. Submit the assessment so the controller raises the protected reserve from 10% to 40%.
+
+In one sentence: **ProofReserve notices verified trouble elsewhere and makes a Creditcoin lending pool keep more cash safe.**
+
+See [the deployment and demo runbook](docs/deployment.md) for guarded commands and required testnet configuration.
 
 ## Trust boundary
 
