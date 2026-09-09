@@ -10,6 +10,9 @@
   },
   "scripts": {
     "build:contracts": "forge build",
+    "app:dev": "vite --config app/vite.config.ts",
+    "app:build": "tsc -p app/tsconfig.json && vite build --config app/vite.config.ts",
+    "app:preview": "vite preview --config app/vite.config.ts",
     "test:contracts": "forge test --force",
     "deploy:source": "node --env-file-if-exists=.env --import tsx deployment/src/source.ts",
     "deploy:creditcoin": "node --env-file-if-exists=.env --import tsx deployment/src/creditcoin.ts",
@@ -24,18 +27,24 @@
     "risk:submit": "node --env-file-if-exists=.env --import tsx risk/src/agent-cli.ts submit",
     "risk:test": "tsx --test risk/test/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run typecheck && pnpm run worker:test && pnpm run risk:test"
+    "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run typecheck && pnpm run worker:test && pnpm run risk:test && pnpm run app:build"
   },
   "dependencies": {
     "@gluwa/asc-contracts": "0.2.1",
     "@gluwa/usc-sdk": "0.18.0",
     "@openzeppelin/contracts": "5.4.0",
-    "ethers": "6.17.0"
+    "ethers": "6.17.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@types/node": "26.1.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
     "tsx": "4.22.4",
-    "typescript": "6.0.2"
+    "typescript": "6.0.2",
+    "vite": "^8.2.2"
   },
   "packageManager": "pnpm@10.33.1"
 }

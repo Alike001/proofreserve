@@ -22,6 +22,18 @@ In one sentence: **ProofReserve notices verified trouble elsewhere and makes a C
 
 See [the deployment and demo runbook](docs/deployment.md) for guarded commands and required testnet configuration.
 
+## Product dashboard
+
+Run the responsive dashboard locally:
+
+    pnpm app:dev
+
+It opens in a truthfully labeled preview state until the public `VITE_CREDITCOIN_RPC_URL`, evidence, controller, and pool addresses are configured. Browser variables are public by definition: never place the Gemini key or a wallet private key behind a `VITE_` prefix.
+
+Create the production bundle with:
+
+    pnpm app:build
+
 ## Trust boundary
 
 - Attestcoin proves source-chain transaction inclusion and continuity.
