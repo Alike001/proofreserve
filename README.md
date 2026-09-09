@@ -8,7 +8,7 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 
 ## Status
 
-Three local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, and a Gemini-backed risk engine with a deterministic safety floor. Testnet deployments and a live Gemini inference run are not yet claimed.
+Three local slices are implemented: an original source loan book and Attestcoin-compatible evidence receiver, a durable proof queue, a bounded reserve controller and capacity-enforcing pool, and a Gemini-backed risk engine with a deterministic safety floor. A live schema-bound Gemini inference was verified on 2026-09-09; testnet deployments are not yet claimed.
 
 ## Trust boundary
 

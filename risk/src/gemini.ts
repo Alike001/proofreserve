@@ -1,5 +1,3 @@
-import {GoogleGenAI} from "@google/genai";
-
 import {ModelCandidate, PortfolioFeatures, REASON_CODES, REGIMES} from "./domain.js";
 import {isReasonCode} from "./policy.js";
 
@@ -31,47 +29,61 @@ export interface GeminiInteractionRequest {
   store: false;
 }
 
-export type RunGeminiInteraction = (
-  request: GeminiInteractionRequest
-) => PromiseLike<{output_text?: string}>;
+interface GeminiInteractionResponse {
+  steps?: Array<{
+    type?: string;
+    content?: Array<{type?: string; text?: string}>;
+  }>;
+  error?: {status?: string; message?: string};
+}
 
 export class GeminiClient {
-  private readonly runInteraction: RunGeminiInteraction;
-
   constructor(
-    apiKey: string | undefined,
-    private readonly model = "gemini-3.8-flash",
-    runInteraction?: RunGeminiInteraction
-  ) {
-    if (runInteraction) {
-      this.runInteraction = runInteraction;
-      return;
-    }
-
-    this.runInteraction = async (request) => {
-      if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
-      const client = new GoogleGenAI({apiKey});
-      const interaction = await client.interactions.create(request, {timeout: 20_000, maxRetries: 1});
-      return interaction.output_text ? {output_text: interaction.output_text} : {};
-    };
-  }
+    private readonly apiKey: string | undefined,
+    private readonly model = "gemini-3.7-flash",
+    private readonly fetchFn: typeof fetch = fetch,
+    private readonly endpoint = "https://generativelanguage.googleapis.com/v1beta/interactions"
+  ) {}
 
   async assess(features: PortfolioFeatures): Promise<ModelCandidate> {
-    const interaction = await this.runInteraction({
+    if (!this.apiKey) throw new Error("GEMINI_API_KEY is not configured");
+
+    const request: GeminiInteractionRequest = {
       model: this.model,
       store: false,
       system_instruction:
-        "You are a conservative portfolio risk classifier. Use only the supplied typed facts. Identify interactions among repayment behavior, correlated group deterioration, loss, concentration, and utilization. Return only schema-valid JSON.",
+        "You are a conservative portfolio risk classifier. Use only the supplied typed facts. Identify interactions among repayment behavior, correlated group deterioration, loss, concentration, and utilization. Monetary values are integer base units; never infer an asset symbol or decimals. Return only schema-valid JSON.",
       input: JSON.stringify(features),
       response_format: {
         type: "text",
         mime_type: "application/json",
         schema: RESPONSE_SCHEMA
       }
-    });
+    };
 
-    if (!interaction.output_text) throw new Error("Gemini response did not contain output text");
-    return validateCandidate(JSON.parse(interaction.output_text) as unknown);
+    const response = await this.fetchFn(this.endpoint, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-goog-api-key": this.apiKey
+      },
+      body: JSON.stringify(request),
+      signal: AbortSignal.timeout(30_000)
+    });
+    const interaction = (await response.json()) as GeminiInteractionResponse;
+    if (!response.ok) {
+      const detail = interaction.error?.status ?? `HTTP ${response.status}`;
+      throw new Error(`Gemini request failed: ${detail}`);
+    }
+
+    const outputText = interaction.steps
+      ?.filter((step) => step.type === "model_output")
+      .flatMap((step) => step.content ?? [])
+      .filter((content) => content.type === "text")
+      .map((content) => content.text ?? "")
+      .join("");
+    if (!outputText) throw new Error("Gemini response did not contain model output text");
+    return validateCandidate(JSON.parse(outputText) as unknown);
   }
 }
 

@@ -28,7 +28,7 @@ The application—not the model—maps the regime to reserve basis points and co
 
 ## Free-tier hosted path
 
-The server-side client uses the official `@google/genai` SDK and the Gemini Interactions API. The default model is `gemini-3.8-flash`, selected because Google's current pricing page lists free input and output tokens for it. A `GEMINI_API_KEY` is required for live inference, but upgrading to a paid tier is not required within free-tier limits.
+The server-side client calls the official Gemini Interactions REST API with the key in the `x-goog-api-key` header. The default model is `gemini-3.7-flash`, selected because Google's current pricing page lists free input and output tokens for it and it responds faster for this bounded classification task. A `GEMINI_API_KEY` is required for live inference, but upgrading to a paid tier is not required within free-tier limits.
 
 The key must stay in the worker environment and never enter the browser, repository, logs, or chat. Free-tier prompts may be used to improve Google's products, so the model receives only public testnet aggregates and identifiers—not personal or confidential borrower data.
 
@@ -36,4 +36,4 @@ A blockchain signing key and faucet gas are separately required later to submit 
 
 ## Current gate
 
-The engine, schema request, safety behavior, hashes, missing-key behavior, and fallback are covered by tests. A genuine hosted inference remains open until the user configures a Gemini API key locally and is not represented as complete.
+The engine, schema request, safety behavior, hashes, missing-key behavior, and fallback are covered by tests. A genuine `gemini-3.7-flash` inference against the stress fixture succeeded on 2026-09-09 and returned a schema-valid `STRESS` assessment through the `GEMINI` path.
