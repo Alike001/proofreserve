@@ -1,0 +1,118 @@
+# Reality Research: ProofReserve vs Resyvr
+
+_Research date: 2026-09-10. Resyvr source revision: `c742b3cda8efd3fc5786b5e401ae13185398ade8`. This is a current-state comparison, not a prediction or guarantee of hackathon placement._
+
+## Scope
+
+This comparison asks which project currently presents the stronger BUIDL CTC submission, where each project uses Attestcoin and Creditcoin meaningfully, and what ProofReserve must improve to become more competitive. The projects target different primary sectors: Resyvr is an RWA issuance product; ProofReserve is a DeFi lending-risk product with a bounded AI component.
+
+## Sources Checked
+
+- The current [Resyvr repository](https://github.com/Webghost01-NG/resyvr), including contracts, dashboard, architecture, submission material, deployment evidence, tests, and V2 redemption prototype.
+- The public [Resyvr application](https://webghost01-ng.github.io/resyvr/dashboard/#top) at desktop and mobile viewports.
+- The current ProofReserve repository, contracts, application, deployment manifests, testnet evidence, tests, and generated browser build.
+- Fresh local verification runs for both repositories.
+- Public Sepolia and Creditcoin CC3 transaction/address references recorded by both projects.
+
+## Verified Facts
+
+### Product in one sentence
+
+- **Resyvr:** a self-service system for creating a branded Creditcoin token whose supply is limited by reserve assets proven on Sepolia.
+- **ProofReserve:** a Creditcoin lending pool whose lendable liquidity is reduced when Attestcoin-proven repayment facts indicate portfolio stress.
+
+In plain language, Resyvr is closer to a **Shopify-style launchpad for reserve-backed tokens**. ProofReserve is a **safety brake for lending pools**.
+
+### Attestcoin and Creditcoin integration
+
+Resyvr uses a genuine Attestcoin proof of a Sepolia reserve deposit before its Creditcoin controller can mint the matching token amount. Its V1 evidence records a 5 test-USDC reserve deposit and an exact 5 rvUSD mint. Issuers are isolated through a factory, controller, token, reserve vault, and CTC activation bond.
+
+ProofReserve uses seven genuine Attestcoin proofs: six Sepolia repayment facts and one checkpoint. Its Creditcoin evidence contract validates the source loan book, event semantics, borrower, group, sequence, epoch, and replay state. A bounded Gemini assessment was accepted by the Creditcoin controller, which moved the pool from 10% to 40% protected. The deployed pool changed from 90 to 60 prUSD lendable and rejects a 70 prUSD request that was permitted at the recorded NORMAL block.
+
+Both projects therefore make Attestcoin a core authorization dependency rather than a decorative data display.
+
+### Product surface
+
+Resyvr exposes a connected-wallet issuer journey covering reserve-vault deployment, issuer-system creation, CTC bond activation, reserve approval and deposit, Attestcoin proof generation, minting, and multi-issuer portfolio management. Its interface also provides transaction recovery, balance and allowance checks, gas estimates, and proof progress.
+
+ProofReserve now has two deliberately separate surfaces:
+
+1. A landing page that explains the 10/90 to 40/60 liquidity-gate outcome in the first viewport.
+2. A live protected-pool application where a visitor can test 50, 70, and 95 prUSD requests against the deployed Creditcoin pool without a wallet or API key.
+
+Fresh browser checks produced these current contract outcomes:
+
+| Request | Current CC3 outcome |
+| --- | --- |
+| 50 prUSD | Allowed |
+| 70 prUSD | Blocked |
+| 95 prUSD | Blocked |
+
+The ProofReserve check is a read-only contract simulation. It proves the financial boundary but does not let a public user deposit, withdraw, originate a loan, create a pool, or submit a new risk epoch from the browser.
+
+### Verification depth
+
+ProofReserve's fresh full check passes 25 Solidity tests, 16 risk-engine tests, one worker persistence/idempotence test, strict TypeScript checking, and a production application build. The live capacity command reads CC3 and confirms the 100 managed / 40 protected / 60 lendable state and the 70 prUSD rejection.
+
+Resyvr's fresh local contract run passes 55 Foundry tests, including fuzz and stateful invariant campaigns. Its V1 preflight and 79-check live evidence verifier pass. Dashboard structure, ABI encoding, TypeScript, unit, and submission-package checks also pass.
+
+Resyvr's V2 live evidence verifier does **not** currently pass against the checked-out source revision. It reports an issuer-factory artifact hash mismatch:
+
+- Expected: `0x7035cbd60a4e17464f580318b979b108f9b1259fe3ba4adb2513699cfc5262ce`
+- Received: `0x6eea8f9b610390a0a6d069b2ad0149e7994ac8c951bd52f54f295b0d37204bf0`
+
+Therefore Resyvr V1 is strongly reproduced, while the current V2 redemption evidence is not fully reproduced from the current repository artifact.
+
+### Honest limitations
+
+Resyvr's own architecture says that V1 is deposit-only. Its V2 prototype adds identified payouts and proof-finalized redemption, but still assumes issuer liveness and does not claim a trustless two-way stablecoin. The CTC bond is an activation and accountability mechanism, not dollar insurance. The reserve asset issuer remains trusted, and the software is unaudited testnet code.
+
+ProofReserve demonstrates one configured pool, not a self-service pool network. Pool creation, public lender/borrower transaction flows, and automatic scenario creation are not exposed in the browser. The canonical deterministic baseline already classified the deployed scenario as `STRESS`, and Gemini also returned `STRESS`; the live evidence therefore proves bounded AI participation, but not that AI changed a decision a disclosed simpler rule would have missed.
+
+## Inferences
+
+### Current competitive judgment
+
+If the projects were judged in their current states, Resyvr is ahead in **product completeness**, **self-service workflow**, **test/evidence breadth**, and **business expansion story**. Its application feels like something an issuer can operate, not only inspect.
+
+ProofReserve is ahead in **originality of the financial decision**, **clarity of the Attestcoin → AI → contract authority boundary**, and **direct DeFi consequence**. Its new liquidity-gate landing page is at least as quickly understandable as Resyvr's hero, and its blocked-loan interaction gives the visitor a real contract-derived result. Its weakness is that the user's role is still primarily reviewer rather than lender, borrower, or pool operator.
+
+| Area | ProofReserve | Resyvr | Current edge |
+| --- | --- | --- | --- |
+| 30-second explanation | Concrete lending safety brake | Concrete reserve-backed issuance | Tie |
+| Meaningful Attestcoin use | Seven verified facts drive reserve enforcement | Verified reserve deposit gates minting | Tie |
+| Creditcoin-native consequence | Pool liquidity is contract-limited | Token minting and issuer bond live on CC3 | Tie |
+| Originality | Multi-fact portfolio risk and bounded AI | Strong but familiar proof-of-reserves issuance | ProofReserve |
+| Usable end-to-end workflow | Read-only capacity test and evidence inspection | Multi-step self-service issuer workflow | Resyvr |
+| Reproducible verification | Healthy tests and live capacity check | Broader V1 verifier and stronger contract suite | Resyvr |
+| AI necessity | Not yet demonstrated by canonical scenario | Not an AI product | Resyvr avoids this question |
+| Expansion/business story | Future reusable pool-risk controller | Factory already supports multiple issuers | Resyvr |
+
+### Track judgment
+
+ProofReserve should enter the **DeFi track**. The undeniably working product is a lending-pool liquidity control. AI is the differentiator inside the product, but the present canonical scenario is not strong enough to make AI itself the safest primary category.
+
+### Top-three judgment
+
+No honest analysis can guarantee a top-three placement or the grand prize. ProofReserve has a credible top-three mechanism, but Resyvr is presently more submission-ready as a complete product. ProofReserve should not restart: its core idea is differentiated and already publicly deployed. The correct move is to close the product and AI-proof gaps.
+
+The highest-value next addition is a second public evidence epoch in which the transparent deterministic baseline returns `WATCH`, while Gemini identifies a relationship among individually modest facts and recommends the contract-approved `STRESS` band. That would prove why multiple verified facts and AI reasoning are both necessary. The contract must continue to validate the final band and retain all fund authority.
+
+The second-highest-value addition is a no-key `verify:live` command that checks the complete public trail from Sepolia receipts through Attestcoin acceptances, checkpoint root, saved Gemini artifact, enforcement transaction, and historical/current capacity outcomes.
+
+After those, one genuine write-capable user loop—such as a clearly permissioned pool-manager action or a safe test-asset lender flow—would move ProofReserve from an excellent interactive proof into a more complete financial application. It should not add a generic token factory: that would weaken the story, duplicate Resyvr's territory, and make Attestcoin less central to ProofReserve's unique value.
+
+## Unknowns And Questions
+
+- The full set and final quality of submitted hackathon projects are not yet known.
+- The organizers have not supplied a complete weighted judging rubric beyond the stated importance of meaningful Attestcoin integration.
+- No external Creditcoin lending operator has yet validated demand for ProofReserve's dynamic reserve policy.
+- Resyvr may repair its V2 artifact mismatch after the checked revision.
+- ProofReserve's redesigned application is local until its commit is pushed and deployed.
+
+## Not Included
+
+- No claim about either team's eligibility, ownership, or legal compliance.
+- No security audit conclusion; passing tests do not make either project production-safe.
+- No estimate of monetary value, adoption, investment approval, or guaranteed prize placement.
+- No changes to the Resyvr repository.

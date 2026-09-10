@@ -1,84 +1,61 @@
-import {useEffect, useState, type FormEvent} from "react";
+import {useEffect, useState, type CSSProperties, type FormEvent, type ReactNode} from "react";
 
-import {AuditLedger} from "./components/AuditLedger";
-import {Header, type NetworkStatus} from "./components/Header";
-import {ReserveShift} from "./components/ReserveShift";
-import {Workflow} from "./components/Workflow";
 import {
   formatNumber,
   hasLiveConfiguration,
   loadDashboardSnapshot,
   previewSnapshot,
+  shortHash,
   simulateLoanCapacity,
   type CapacityComparison,
   type DashboardSnapshot
 } from "./data";
 import {ArrowIcon, CheckIcon, EvidenceIcon, ExternalIcon, LockIcon, RiskIcon} from "./icons";
 
-type VerificationState = "idle" | "checking" | "verified" | "error";
+type NetworkState = "loading" | "live" | "preview" | "error";
+type CapacityState = "idle" | "testing" | "complete" | "error";
+
+interface InjectedWallet {
+  request(args: {method: string; params?: unknown[]}): Promise<unknown>;
+}
 
 export function App() {
   const [snapshot, setSnapshot] = useState<DashboardSnapshot>(previewSnapshot);
-  const [networkStatus, setNetworkStatus] = useState<NetworkStatus>(hasLiveConfiguration() ? "loading" : "preview");
-  const [verification, setVerification] = useState<VerificationState>("idle");
-  const [message, setMessage] = useState("");
-  const explorerBaseUrl = import.meta.env.VITE_CC3_EXPLORER_TX_URL?.trim() || "";
+  const [network, setNetwork] = useState<NetworkState>(hasLiveConfiguration() ? "loading" : "preview");
+  const [route, setRoute] = useState(() => normalizeRoute(window.location.pathname));
 
   useEffect(() => {
-    if (hasLiveConfiguration()) void refreshSnapshot(false);
+    const onPopState = () => setRoute(normalizeRoute(window.location.pathname));
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  async function refreshSnapshot(announce: boolean) {
-    if (announce) setVerification("checking");
-    try {
-      const next = await loadDashboardSnapshot();
-      validateSnapshot(next);
-      setSnapshot(next);
-      setNetworkStatus(next.mode);
-      if (announce) {
-        setVerification("verified");
-        setMessage(next.mode === "live" ? `Verified against CC3 at epoch ${next.epoch}.` : "Preview relationships verified locally.");
-      }
-    } catch (error) {
-      setNetworkStatus("error");
-      setVerification("error");
-      setMessage(error instanceof Error ? error.message : "Unable to verify the current snapshot.");
-    }
+  useEffect(() => {
+    if (!hasLiveConfiguration()) return;
+    void loadDashboardSnapshot()
+      .then((next) => {
+        validateSnapshot(next);
+        setSnapshot(next);
+        setNetwork(next.mode);
+      })
+      .catch(() => setNetwork("error"));
+  }, []);
+
+  function openRoute(next: "/" | "/app") {
+    if (window.location.pathname !== next) window.history.pushState({}, "", next);
+    setRoute(next);
+    window.scrollTo({top: 0, behavior: "smooth"});
   }
 
-  function navigate(section: string) {
-    document.getElementById(section)?.scrollIntoView({behavior: "smooth", block: "start"});
-  }
-
-  const transactionUrl = explorerBaseUrl && snapshot.reserveTransactionHash
-    ? `${explorerBaseUrl}${snapshot.reserveTransactionHash}`
-    : "";
-
-  return (
-    <div className="app-shell">
-      <a className="skip-link" href="#main-content">Skip to content</a>
-      <Header status={networkStatus} onNavigate={navigate} />
-      <main id="main-content">
-        <MarketingHero snapshot={snapshot} networkStatus={networkStatus} onNavigate={navigate} />
-        <CapacityLab snapshot={snapshot} networkStatus={networkStatus} />
-        <ProtocolRail />
-        <ProblemSection />
-        <HowItWorks />
-        <SafetyBoundary />
-        <LiveProof
-          snapshot={snapshot}
-          networkStatus={networkStatus}
-          verification={verification}
-          message={message}
-          transactionUrl={transactionUrl}
-          explorerBaseUrl={explorerBaseUrl}
-          onVerify={() => void refreshSnapshot(true)}
-        />
-        <ProductDirection />
-      </main>
-      <SiteFooter />
-    </div>
+  return route === "/app" ? (
+    <PoolApplication snapshot={snapshot} network={network} onHome={() => openRoute("/")} />
+  ) : (
+    <LandingPage snapshot={snapshot} network={network} onOpenApp={() => openRoute("/app")} />
   );
+}
+
+function normalizeRoute(pathname: string): "/" | "/app" {
+  return pathname.replace(/\/$/, "") === "/app" ? "/app" : "/";
 }
 
 function validateSnapshot(snapshot: DashboardSnapshot) {
@@ -90,405 +67,320 @@ function validateSnapshot(snapshot: DashboardSnapshot) {
   }
 }
 
-interface HeroProps {
-  snapshot: DashboardSnapshot;
-  networkStatus: NetworkStatus;
-  onNavigate: (section: string) => void;
-}
-
-function MarketingHero({snapshot, networkStatus, onNavigate}: HeroProps) {
+function LandingPage({snapshot, network, onOpenApp}: {snapshot: DashboardSnapshot; network: NetworkState; onOpenApp: () => void}) {
   return (
-    <section className="marketing-hero page-shell" id="product">
-      <div className="marketing-hero__copy">
-        <div className="eyebrow"><span /> Built on Creditcoin · powered by Attestcoin</div>
-        <h1>Lending pools that react <em>before</em> losses spread.</h1>
-        <p className="marketing-hero__lead">
-          ProofReserve turns verified repayment activity from other chains into policy-controlled liquidity protection on Creditcoin.
-        </p>
-        <div className="hero-actions">
-          <button className="button button--primary" type="button" onClick={() => onNavigate("capacity-lab")}>
-            Test the live pool <ArrowIcon />
-          </button>
-          <a className="text-link" href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" target="_blank" rel="noreferrer">
-            Read the evidence <ExternalIcon />
-          </a>
-        </div>
-        <div className="hero-proof-line" aria-label="Live product proof points">
-          <span><strong>7</strong> Attestcoin proofs</span>
-          <span><strong>40%</strong> reserve enforced</span>
-          <span><strong>CC3</strong> public testnet</span>
-        </div>
-      </div>
-      <div className="hero-product" aria-label="Live reserve response example">
-        <div className="hero-product__topline">
-          <div>
-            <span className="micro-label">Live protocol response</span>
-            <strong>Portfolio protection</strong>
-          </div>
-          <ConnectionLabel status={networkStatus} />
-        </div>
-        <ReserveShift snapshot={snapshot} />
-        <div className="hero-product__result">
-          <span className="result-dot" />
-          <div><strong>{snapshot.blockedRequest} prUSD loan prevented</strong><span>Reserve policy now keeps {snapshot.reservePercent}% liquid.</span></div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-type CapacityTestState = "idle" | "testing" | "complete" | "error";
-
-function CapacityLab({snapshot, networkStatus}: {snapshot: DashboardSnapshot; networkStatus: NetworkStatus}) {
-  const [amount, setAmount] = useState("70");
-  const [state, setState] = useState<CapacityTestState>("idle");
-  const [result, setResult] = useState<CapacityComparison | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  async function runCapacityTest(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setState("testing");
-    setErrorMessage("");
-    try {
-      const parsedAmount = Number(amount);
-      const next = await simulateLoanCapacity(parsedAmount);
-      setResult(next);
-      setState("complete");
-    } catch (error) {
-      setResult(null);
-      setState("error");
-      setErrorMessage(error instanceof Error ? error.message : "Creditcoin could not complete the capacity test.");
-    }
-  }
-
-  function chooseAmount(next: number) {
-    setAmount(String(next));
-    setState("idle");
-    setResult(null);
-    setErrorMessage("");
-  }
-
-  const changed = result && result.normal.outcome !== result.current.outcome;
-
-  return (
-    <section className="capacity-section" id="capacity-lab">
-      <div className="page-shell capacity-shell">
-        <div className="workspace-heading">
-          <div>
-            <span className="section-index">Live pool / CC3 testnet</span>
-            <h2>Would the pool approve this loan?</h2>
-          </div>
-          <p>Choose an amount. ProofReserve asks the deployed contract twice: once before the verified warning and once after it.</p>
-        </div>
-
-        <div className="capacity-workspace">
-          <form className="capacity-form" onSubmit={runCapacityTest}>
-            <div className="capacity-form__topline">
-              <div>
-                <span className="micro-label">Capacity test</span>
-                <strong>Proposed loan</strong>
-              </div>
-              <ConnectionLabel status={networkStatus} />
-            </div>
-            <label className="amount-field">
-              <span>Loan amount</span>
-              <div className="amount-field__control">
-                <input
-                  type="number"
-                  min="0.000001"
-                  max="1000000"
-                  step="any"
-                  inputMode="decimal"
-                  value={amount}
-                  onChange={(event) => {
-                    setAmount(event.target.value);
-                    setState("idle");
-                    setResult(null);
-                    setErrorMessage("");
-                  }}
-                  aria-describedby="capacity-help"
-                  disabled={state === "testing"}
-                />
-                <span>prUSD</span>
-              </div>
-            </label>
-            <div className="amount-presets" aria-label="Suggested loan amounts">
-              {[50, 70, 95].map((preset) => (
-                <button
-                  type="button"
-                  className={amount === String(preset) ? "is-selected" : ""}
-                  onClick={() => chooseAmount(preset)}
-                  disabled={state === "testing"}
-                  key={preset}
-                >
-                  {preset} prUSD
-                </button>
-              ))}
-            </div>
-            <p className="capacity-help" id="capacity-help">No wallet, gas, or browser calculation. Both results come from real CC3 contract simulations.</p>
-            <button className="button button--primary capacity-submit" type="submit" disabled={state === "testing" || networkStatus !== "live"}>
-              {state === "testing" ? "Testing on CC3…" : "Test lending capacity"}<ArrowIcon />
-            </button>
-            <p className={`capacity-status capacity-status--${state}`} role="status">
-              {state === "error" ? errorMessage : state === "complete" ? "Two contract simulations completed." : ""}
-            </p>
-          </form>
-
-          <div className={`capacity-results capacity-results--${state}`} aria-live="polite">
-            {state === "testing" ? (
-              <CapacitySkeleton />
-            ) : result ? (
-              <>
-                <CapacityResultCard label="Before verified stress" state={result.normal} amount={result.amount} />
-                <div className={`capacity-verdict ${changed ? "capacity-verdict--changed" : ""}`}>
-                  <span>{changed ? "Decision changed" : "Decision unchanged"}</span>
-                  <strong>{changed ? "Attested risk now prevents this loan." : "The reserve does not change this amount's outcome."}</strong>
-                  <p>This is a read-only simulation of the deployed <code>commitLoan</code> function. No demo state was changed.</p>
-                </div>
-                <CapacityResultCard label="After verified stress" state={result.current} amount={result.amount} current />
-              </>
-            ) : (
-              <div className="capacity-empty">
-                <span className="capacity-empty__mark">70</span>
-                <div><strong>Start with 70 prUSD</strong><p>It fits when the pool protects 10%, but fails after the reserve rises to 40%.</p></div>
-              </div>
-            )}
-          </div>
-
-          <aside className="capacity-evidence" aria-label="Current decision summary">
-            <div className="capacity-evidence__header"><span>Why the pool changed</span><span>Epoch {snapshot.epoch}</span></div>
-            <EvidenceSummary index="01" label="Attestcoin evidence" value={`${snapshot.factCount} facts verified`} detail={`${snapshot.settledCount} settled · ${snapshot.lateCount} late`} />
-            <EvidenceSummary index="02" label="Bounded assessment" value={`${snapshot.regime} · ${snapshot.confidencePercent}%`} detail="Gemini recommendation" />
-            <EvidenceSummary index="03" label="Contract response" value={`${snapshot.reservePercent}% protected`} detail={`${snapshot.lendable} prUSD remains lendable`} />
-            <a className="capacity-evidence__link" href="#live-proof">Inspect every proof <ArrowIcon /></a>
-          </aside>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CapacityResultCard({label, state, amount, current = false}: {label: string; state: CapacityComparison["normal"]; amount: number; current?: boolean}) {
-  return (
-    <article className={`capacity-result ${current ? "capacity-result--current" : ""}`}>
-      <div className="capacity-result__header"><span>{label}</span><small>block {state.blockNumber.toLocaleString()}</small></div>
-      <div className="capacity-result__amount"><strong>{formatNumber(amount)}</strong><span>prUSD request</span></div>
-      <div className={`capacity-result__outcome capacity-result__outcome--${state.outcome.toLowerCase()}`}>
-        <i /> {state.outcome}
-      </div>
-      <dl>
-        <div><dt>Protected</dt><dd>{formatNumber(state.reservePercent)}%</dd></div>
-        <div><dt>Lendable</dt><dd>{formatNumber(state.lendable)} prUSD</dd></div>
-      </dl>
-      <p>{state.reason}</p>
-    </article>
-  );
-}
-
-function CapacitySkeleton() {
-  return <div className="capacity-skeleton" aria-label="Testing both contract states"><i /><i /><i /><i /></div>;
-}
-
-function EvidenceSummary({index, label, value, detail}: {index: string; label: string; value: string; detail: string}) {
-  return (
-    <div className="evidence-summary">
-      <span>{index}</span>
-      <div><small>{label}</small><strong>{value}</strong><p>{detail}</p></div>
+    <div className="site-shell">
+      <a className="skip-link" href="#main-content">Skip to content</a>
+      <LandingHeader onOpenApp={onOpenApp} />
+      <main id="main-content">
+        <LiquidityGateHero snapshot={snapshot} network={network} onOpenApp={onOpenApp} />
+        <ProofFlow snapshot={snapshot} onOpenApp={onOpenApp} />
+        <ProductSection snapshot={snapshot} network={network} onOpenApp={onOpenApp} />
+        <AuthoritySection />
+        <FinalCallout onOpenApp={onOpenApp} />
+      </main>
+      <SiteFooter />
     </div>
   );
 }
 
-function ConnectionLabel({status}: {status: NetworkStatus}) {
-  return (
-    <span className={`connection-label connection-label--${status}`}>
-      <i /> {status === "live" ? "On-chain" : status === "loading" ? "Loading CC3" : status === "error" ? "RPC unavailable" : "Preview"}
-    </span>
-  );
-}
-
-function ProtocolRail() {
-  return (
-    <section className="protocol-rail" aria-label="Protocol stack">
-      <div className="page-shell protocol-rail__inner">
-        <span className="protocol-rail__intro">One verifiable path</span>
-        <span>Ethereum Sepolia</span><b>→</b><span>Attestcoin</span><b>→</b><span>Gemini</span><b>→</b><span>Creditcoin</span>
-      </div>
-    </section>
-  );
-}
-
-function ProblemSection() {
-  return (
-    <section className="section page-shell problem" id="problem">
-      <div className="section-heading">
-        <span className="section-index">01 / The blind spot</span>
-        <h2>Credit risk does not stay neatly on one chain.</h2>
-      </div>
-      <div className="problem__body">
-        <p className="problem__statement">A lending pool can be healthy locally while the same borrowers are already falling behind elsewhere.</p>
-        <div className="problem__detail">
-          <p>Today, that warning often arrives through a private database or an isolated threshold. The pool must trust whoever operates the feed—and still misses relationships between borrowers.</p>
-          <p>ProofReserve gives the pool evidence it can verify, reasoning it can constrain, and a response it can enforce.</p>
-        </div>
-      </div>
-      <div className="signal-map" aria-label="Correlated borrower risk example">
-        <div className="signal-map__source">
-          <span>Borrower group / logistics</span>
-          <strong>Two related borrowers turn late</strong>
-        </div>
-        <div className="signal-map__lines" aria-hidden="true"><i /><i /></div>
-        <div className="borrower borrower--late"><span>Borrower 01</span><strong>LATE</strong></div>
-        <div className="borrower borrower--late"><span>Borrower 02</span><strong>LATE</strong></div>
-        <div className="borrower borrower--healthy"><span>Borrower 03</span><strong>SETTLED</strong></div>
-      </div>
-    </section>
-  );
-}
-
-function HowItWorks() {
-  const steps = [
-    {number: "01", title: "Prove the facts", body: "Attestcoin verifies that repayment transactions really happened on the source chain.", meta: "Inclusion + continuity", icon: <EvidenceIcon />},
-    {number: "02", title: "Read the pattern", body: "Gemini reasons across borrower, group, value, and deterioration signals inside a strict output schema.", meta: "Four finite regimes", icon: <RiskIcon />},
-    {number: "03", title: "Enforce the limit", body: "Creditcoin contracts validate the decision and change how much liquidity the pool can lend.", meta: "Contracts hold authority", icon: <LockIcon />}
+function LandingHeader({onOpenApp}: {onOpenApp: () => void}) {
+  const links = [
+    ["Product", "product"],
+    ["How it protects", "how-it-protects"],
+    ["Live evidence", "live-evidence"],
+    ["Developers", "developers"]
   ];
+
   return (
-    <section className="section section--soft" id="how-it-works">
-      <div className="page-shell process">
-        <div className="section-heading section-heading--split">
-          <div><span className="section-index">02 / How it works</span><h2>Facts first. Judgment second. Enforcement last.</h2></div>
-          <p>The order matters. Each layer does one job, and no layer gets more power than it needs.</p>
-        </div>
-        <div className="process-list">
-          {steps.map((step) => (
-            <article className="process-step" key={step.number}>
-              <span className="process-step__number">{step.number}</span>
-              <span className="process-step__icon">{step.icon}</span>
-              <div><h3>{step.title}</h3><p>{step.body}</p></div>
-              <span className="process-step__meta">{step.meta}</span>
-            </article>
-          ))}
-        </div>
+    <header className="landing-header">
+      <div className="landing-header__inner">
+        <Brand />
+        <nav className="landing-nav" aria-label="Primary navigation">
+          {links.map(([label, target]) => <a href={`#${target}`} key={target}>{label}</a>)}
+        </nav>
+        <span className="built-on">Built on Creditcoin</span>
+        <button className="primary-button header-cta" type="button" onClick={onOpenApp}>Open app <ArrowIcon /></button>
       </div>
-    </section>
+    </header>
   );
 }
 
-function SafetyBoundary() {
+function Brand({button = false, onClick}: {button?: boolean; onClick?: () => void}) {
+  const content = <><span className="brand-mark" aria-hidden="true"><i /><i /></span><span>ProofReserve</span></>;
+  return button ? <button className="brand" type="button" onClick={onClick}>{content}</button> : <a className="brand" href="#product">{content}</a>;
+}
+
+function LiquidityGateHero({snapshot, network, onOpenApp}: {snapshot: DashboardSnapshot; network: NetworkState; onOpenApp: () => void}) {
   return (
-    <section className="section page-shell safety" id="safety">
-      <div className="safety__statement">
-        <span className="section-index">03 / Designed for financial control</span>
-        <h2>AI advises.<br/><em>Contracts decide.</em></h2>
-        <p>Gemini can recognize a portfolio pattern that a single threshold misses. It cannot touch funds or invent new financial rules.</p>
-      </div>
-      <div className="policy-panel">
-        <div className="policy-panel__header"><span>Reserve policy / v1</span><span className="policy-panel__status"><i /> Enforced</span></div>
-        <PolicyCheck text="Only registered evidence roots and epochs" />
-        <PolicyCheck text="Only NORMAL, WATCH, STRESS, or CRISIS" />
-        <PolicyCheck text="Minimum 60% model confidence" />
-        <PolicyCheck text="Immediate increases; delayed decreases" />
-        <PolicyCheck text="No token transfers by the AI signer" />
-      </div>
-    </section>
-  );
-}
-
-function PolicyCheck({text}: {text: string}) {
-  return <div className="policy-check"><CheckIcon /><span>{text}</span></div>;
-}
-
-interface LiveProofProps {
-  snapshot: DashboardSnapshot;
-  networkStatus: NetworkStatus;
-  verification: VerificationState;
-  message: string;
-  transactionUrl: string;
-  explorerBaseUrl: string;
-  onVerify: () => void;
-}
-
-function LiveProof({snapshot, networkStatus, verification, message, transactionUrl, explorerBaseUrl, onVerify}: LiveProofProps) {
-  return (
-    <section className="section section--proof" id="live-proof">
-      <div className="page-shell">
-        <div className="section-heading section-heading--split proof-heading">
-          <div><span className="section-index">04 / Public testnet evidence</span><h2>Do not take our word for it.</h2></div>
-          <div><p>This dashboard reads the deployed Creditcoin contracts. Verify the current decision, then inspect its public transaction.</p><ConnectionLabel status={networkStatus} /></div>
-        </div>
-        <div className="dashboard-frame">
-          <div className="dashboard-frame__bar">
-            <div><i /><i /><i /></div>
-            <span>proofreserve / live risk console</span>
-            <span>epoch {snapshot.epoch}</span>
+    <section className="gate-hero" id="product">
+      <div className="gate-grid" aria-hidden="true" />
+      <div className="landing-shell gate-hero__inner">
+        <div className="gate-copy">
+          <h1>A lending pool<br />that knows when<br /><em>to stop lending.</em></h1>
+          <p>ProofReserve watches verified repayments on other chains. When related borrowers fall behind, it protects more of the pool on Creditcoin—before losses spread.</p>
+          <div className="gate-actions">
+            <button className="primary-button" type="button" onClick={onOpenApp}>Open the protected pool <ArrowIcon /></button>
+            <a className="underlined-link" href="#live-evidence">See why 70 prUSD was blocked <ArrowIcon /></a>
           </div>
-          <div className="dashboard">
-            <div className="console-summary">
-              <div><span className="micro-label">Current response</span><h3>{snapshot.regime} protection active</h3></div>
-              <div className="console-summary__metric"><strong>{snapshot.reservePercent}%</strong><span>protected</span></div>
-              <div className="console-summary__metric"><strong>{snapshot.lendable}</strong><span>prUSD lendable</span></div>
-            </div>
-            <Workflow snapshot={snapshot} />
-            <AuditLedger records={snapshot.records} explorerBaseUrl={explorerBaseUrl} />
-            <Actions state={verification} message={message} transactionUrl={transactionUrl} onVerify={onVerify} />
+          <div className="trust-line">
+            <span><i className={`trust-dot trust-dot--${network}`} />Live on Creditcoin CC3 Testnet</span>
+            <span><i className="trust-dot trust-dot--attest" />Cross-chain facts verified by Attestcoin</span>
           </div>
         </div>
+        <LiquidityGate snapshot={snapshot} />
       </div>
     </section>
   );
 }
 
-interface ActionsProps {
-  state: VerificationState;
-  message: string;
-  transactionUrl: string;
-  onVerify: () => void;
-}
-
-function Actions({state, message, transactionUrl, onVerify}: ActionsProps) {
-  const label = state === "checking" ? "Verifying on CC3…" : state === "verified" ? "Decision verified" : "Verify latest decision";
+function LiquidityGate({snapshot}: {snapshot: DashboardSnapshot}) {
   return (
-    <footer className="actions">
-      <p className={`actions__message actions__message--${state}`} role="status">{message}</p>
-      <button className="button button--primary" type="button" onClick={onVerify} disabled={state === "checking"}>
-        {label}<ArrowIcon />
-      </button>
-      {transactionUrl ? (
-        <a className="button-link" href={transactionUrl} target="_blank" rel="noreferrer">View CC3 transaction <ExternalIcon /></a>
-      ) : (
-        <span className="button-link button-link--disabled" title="Available after public deployment">Transaction pending</span>
-      )}
-    </footer>
+    <div className="liquidity-gate" aria-label="A 100 prUSD pool changes from 10 protected and 90 lendable to 40 protected and 60 lendable after verified late repayments, blocking a 70 prUSD request">
+      <div className="gate-orbit" />
+      <div className="gate-topline"><strong>100 prUSD pool</strong><span>Same pool. Smarter protection.</span></div>
+      <AllocationRail label="NORMAL" protectedAmount={snapshot.previousReservePercent} lendable={snapshot.previousLendable} />
+      <div className="verified-facts">
+        <span className="chain-node chain-node--ethereum">◆</span>
+        <span className="chain-node chain-node--attest"><EvidenceIcon /></span>
+        <div><strong>{snapshot.lateCount} verified late repayments</strong><small>from Ethereum via Attestcoin</small></div>
+      </div>
+      <div className="gate-connector" aria-hidden="true"><i /></div>
+      <AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={snapshot.lendable} stressed />
+      <div className="blocked-request">
+        <div><strong>{snapshot.blockedRequest} <small>prUSD request</small></strong><span><i /></span></div>
+        <b>×</b>
+        <p><strong>BLOCKED BY CONTRACT</strong><small>Insufficient lendable liquidity</small></p>
+      </div>
+    </div>
   );
 }
 
-function ProductDirection() {
+function AllocationRail({label, protectedAmount, lendable, stressed = false}: {label: string; protectedAmount: number; lendable: number; stressed?: boolean}) {
   return (
-    <section className="section page-shell direction">
-      <div>
-        <span className="section-index">Built as infrastructure, shown as a product</span>
-        <h2>One protected pool today.<br/>A risk layer for many pools tomorrow.</h2>
+    <div className={`allocation allocation--${stressed ? "stress" : "normal"}`}>
+      <span className="state-label">{label}</span>
+      <div className="allocation__labels">
+        <strong>{formatNumber(protectedAmount)} <small>protected</small></strong>
+        <strong>{formatNumber(lendable)} <small>lendable</small></strong>
       </div>
-      <div className="direction__copy">
-        <p>The hackathon deployment proves the complete loop with one pool. The product path adds self-service pool setup, configurable evidence sources, and policy templates for lenders building on Creditcoin.</p>
-        <a className="text-link" href="https://github.com/Alike001/proofreserve" target="_blank" rel="noreferrer">Explore the open-source system <ExternalIcon /></a>
+      <div className="allocation__bar" style={{"--protected": `${protectedAmount}%`} as CSSProperties}>
+        <span className="allocation__protected" /><span className="allocation__lendable" /><i />
+      </div>
+    </div>
+  );
+}
+
+function ProofFlow({snapshot, onOpenApp}: {snapshot: DashboardSnapshot; onOpenApp: () => void}) {
+  return (
+    <section className="proof-flow" id="how-it-protects">
+      <div className="landing-shell">
+        <h2>One fact. One proof. One financial response.</h2>
+        <p className="section-lead">A verified cause-and-effect path replaces the private risk feed a pool would normally have to trust.</p>
+        <div className="flow-rail">
+          <FlowStage number="1" title="Repayment fact" accent="blue">
+            <p>Two related borrowers miss their repayment deadlines on Ethereum Sepolia.</p>
+            <div className="fact-rows"><FactRow label="Borrower 01" status="LATE" /><FactRow label="Borrower 02" status="LATE" /></div>
+          </FlowStage>
+          <FlowStage number="2" title="Attestcoin proof" accent="violet">
+            <p>Attestcoin verifies the source transactions and delivers the facts to Creditcoin.</p>
+            <div className="chain-path"><span>Ethereum</span><b>→</b><span>Attestcoin</span><b>→</b><span>CC3</span></div>
+            <span className="verified-status"><CheckIcon /> Proof verified</span>
+          </FlowStage>
+          <FlowStage number="3" title="Contract response" accent="mint">
+            <p>The ReserveController moves the pool from NORMAL to {snapshot.regime}.</p>
+            <div className="mini-shift"><span>10 → {formatNumber(snapshot.reservePercent)}% protected</span><strong>{snapshot.blockedRequest} prUSD BLOCKED</strong></div>
+          </FlowStage>
+        </div>
+        <button className="underlined-link proof-flow__link" type="button" onClick={onOpenApp}>Inspect the live evidence <ArrowIcon /></button>
       </div>
     </section>
   );
+}
+
+function FlowStage({number, title, accent, children}: {number: string; title: string; accent: string; children: ReactNode}) {
+  return <article className={`flow-stage flow-stage--${accent}`}><header><span>{number}</span><h3>{title}</h3></header>{children}</article>;
+}
+
+function FactRow({label, status}: {label: string; status: string}) {
+  return <div className="fact-row"><span>{label}</span><strong>{status}</strong></div>;
+}
+
+function ProductSection({snapshot, network, onOpenApp}: {snapshot: DashboardSnapshot; network: NetworkState; onOpenApp: () => void}) {
+  return (
+    <section className="product-section" id="live-evidence">
+      <div className="landing-shell">
+        <div className="product-heading">
+          <div><h2>A real pool, not a scripted demo.</h2><p>The interface reads deployed CC3 contracts and tests the same loan request against two real contract states.</p></div>
+          <button className="primary-button" type="button" onClick={onOpenApp}>Open the protected pool <ArrowIcon /></button>
+        </div>
+        <div className="product-preview">
+          <div className="product-preview__bar"><Brand /><span className={`live-read live-read--${network}`}><i />{network === "live" ? "Reading CC3" : network === "loading" ? "Connecting to CC3" : network === "error" ? "RPC unavailable" : "Preview data"}</span></div>
+          <div className="product-preview__body">
+            <div className="preview-capacity"><span>100 prUSD managed</span><AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={snapshot.lendable} stressed /></div>
+            <div className="preview-request"><span>Loan request</span><strong>{snapshot.blockedRequest}<small>prUSD</small></strong><b>BLOCKED</b><p>Only {formatNumber(snapshot.lendable)} prUSD is available to lend.</p></div>
+            <div className="preview-evidence"><span>Why it changed</span><strong>{snapshot.lateCount} late facts</strong><i /> <strong>Attestcoin verified</strong><i /> <strong>{snapshot.reservePercent}% enforced</strong></div>
+          </div>
+        </div>
+        <div className="product-proof-points">
+          <span><strong>Read-only simulations</strong><small>No wallet or gas needed to test capacity</small></span>
+          <span><strong>Public testnet contracts</strong><small>Evidence and enforcement remain inspectable</small></span>
+          <span><strong>Open-source system</strong><small>Contracts, worker, risk engine, and UI</small></span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AuthoritySection() {
+  const rules = ["Only registered evidence roots and epochs", "Only four contract-approved risk regimes", "Minimum model confidence enforced", "Immediate reserve increases; delayed decreases", "AI signer cannot transfer pool funds"];
+  return (
+    <section className="authority-section" id="developers">
+      <div className="landing-shell authority-grid">
+        <div><h2>AI advises.<br /><em>Contracts decide.</em></h2><p>Gemini recognizes portfolio patterns, but it cannot move funds or invent a reserve level. Creditcoin contracts validate every boundary before anything changes.</p></div>
+        <div className="policy-ledger"><header><span>Reserve policy / v1</span><b><i /> ENFORCED</b></header>{rules.map((rule) => <div key={rule}><CheckIcon /><span>{rule}</span></div>)}</div>
+      </div>
+    </section>
+  );
+}
+
+function FinalCallout({onOpenApp}: {onOpenApp: () => void}) {
+  return <section className="final-callout"><div className="landing-shell"><h2>See the contract say no.</h2><p>Try 50, 70, and 95 prUSD against the live Creditcoin pool.</p><button className="primary-button" type="button" onClick={onOpenApp}>Open ProofReserve <ArrowIcon /></button></div></section>;
 }
 
 function SiteFooter() {
+  return <footer className="site-footer"><div className="landing-shell"><Brand /><span>Hackathon-stage testnet software. Not audited for production funds.</span><nav><a href="https://github.com/Alike001/proofreserve" target="_blank" rel="noreferrer">GitHub</a><a href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" target="_blank" rel="noreferrer">Evidence</a><a href="https://creditcoin.org" target="_blank" rel="noreferrer">Creditcoin</a><a href="https://attestcoin.org" target="_blank" rel="noreferrer">Attestcoin</a></nav></div></footer>;
+}
+
+function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapshot; network: NetworkState; onHome: () => void}) {
+  const [amount, setAmount] = useState("70");
+  const [capacityState, setCapacityState] = useState<CapacityState>("idle");
+  const [comparison, setComparison] = useState<CapacityComparison | null>(null);
+  const [capacityMessage, setCapacityMessage] = useState("");
+  const [wallet, setWallet] = useState("");
+  const explorerBaseUrl = import.meta.env.VITE_CC3_EXPLORER_TX_URL?.trim() || "";
+  const transactionUrl = explorerBaseUrl && snapshot.reserveTransactionHash ? `${explorerBaseUrl}${snapshot.reserveTransactionHash}` : "";
+
+  async function checkCapacity(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+    setCapacityState("testing");
+    setCapacityMessage("");
+    try {
+      const result = await simulateLoanCapacity(Number(amount));
+      setComparison(result);
+      setCapacityState("complete");
+    } catch (error) {
+      setComparison(null);
+      setCapacityState("error");
+      setCapacityMessage(error instanceof Error ? error.message : "The contract simulation failed.");
+    }
+  }
+
+  function chooseAmount(value: number) {
+    setAmount(String(value));
+    setComparison(null);
+    setCapacityState("idle");
+    setCapacityMessage("");
+  }
+
+  async function connectWallet() {
+    const provider = (window as Window & {ethereum?: InjectedWallet}).ethereum;
+    if (!provider) {
+      setWallet("Install a wallet");
+      return;
+    }
+    try {
+      const accounts = await provider.request({method: "eth_requestAccounts"});
+      const first = Array.isArray(accounts) && typeof accounts[0] === "string" ? accounts[0] : "";
+      setWallet(first ? `${first.slice(0, 6)}…${first.slice(-4)}` : "Connected");
+    } catch {
+      setWallet("Connection declined");
+    }
+  }
+
+  const currentOutcome = comparison?.current.outcome ?? (Number(amount) <= snapshot.lendable ? "ALLOWED" : "BLOCKED");
+  const currentReason = comparison?.current.reason ?? (currentOutcome === "BLOCKED" ? `Only ${formatNumber(snapshot.lendable)} prUSD is available to lend.` : "This request fits inside current lendable capacity.");
+
   return (
-    <footer className="site-footer">
-      <div className="page-shell site-footer__inner">
-        <div><strong>ProofReserve</strong><span>Protected lending pools powered by verified cross-chain risk.</span></div>
-        <div className="site-footer__links">
-          <a href="https://github.com/Alike001/proofreserve" target="_blank" rel="noreferrer">GitHub</a>
-          <a href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" target="_blank" rel="noreferrer">Evidence</a>
-          <a href="https://creditcoin.org" target="_blank" rel="noreferrer">Creditcoin</a>
-          <a href="https://attestcoin.org" target="_blank" rel="noreferrer">Attestcoin</a>
+    <div className="pool-app">
+      <a className="skip-link" href="#pool-main">Skip to pool</a>
+      <aside className="app-sidebar">
+        <Brand button onClick={onHome} />
+        <nav aria-label="Product navigation">
+          <a className="is-active" href="#overview"><PoolNavIcon kind="overview" />Overview</a>
+          <a href="#loan-desk"><PoolNavIcon kind="loan" />Loan desk</a>
+          <a href="#evidence"><PoolNavIcon kind="evidence" />Evidence</a>
+          <a href="#decision"><PoolNavIcon kind="decision" />Decision</a>
+          <a href="#activity"><PoolNavIcon kind="activity" />Activity</a>
+          <a href="https://github.com/Alike001/proofreserve/blob/main/docs/product-spec.md" target="_blank" rel="noreferrer"><PoolNavIcon kind="integration" />Integration</a>
+        </nav>
+        <div className="app-sidebar__bottom"><a href="https://github.com/Alike001/proofreserve#readme" target="_blank" rel="noreferrer">Documentation <ExternalIcon /></a><a href="https://github.com/Alike001/proofreserve" target="_blank" rel="noreferrer">GitHub <ExternalIcon /></a></div>
+      </aside>
+      <header className="app-topbar">
+        <button className="mobile-home" type="button" onClick={onHome}><BrandMarkOnly />ProofReserve</button>
+        <span className={`app-network app-network--${network}`}><i />Creditcoin CC3</span>
+        <button className="wallet-button" type="button" onClick={() => void connectWallet()}>{wallet || "Connect wallet"}</button>
+      </header>
+      <main className="pool-main" id="pool-main">
+        <section className="pool-overview" id="overview">
+          <div className="pool-title"><div><h1>Protected pool</h1><p>Live reserve enforcement from verified cross-chain repayment facts.</p></div><div className="pool-status"><span>{snapshot.regime}</span><strong>{formatNumber(snapshot.reservePercent)}% <small>protected</small></strong><small>Updated on Creditcoin CC3</small></div></div>
+          <div className="managed-capacity"><span>100 prUSD managed</span><AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={snapshot.lendable} stressed /></div>
+        </section>
+
+        <div className="pool-workspace">
+          <form className="request-panel" id="loan-desk" onSubmit={(event) => void checkCapacity(event)}>
+            <h2>Request liquidity</h2><p>Check whether this amount can be borrowed from the pool.</p>
+            <label htmlFor="loan-amount">Amount</label>
+            <div className="app-amount"><input id="loan-amount" type="number" min="0.000001" max="1000000" step="any" value={amount} onChange={(event) => {setAmount(event.target.value); setComparison(null); setCapacityState("idle");}} /><span>prUSD</span></div>
+            <div className="app-presets">{[50, 70, 95].map((value) => <button className={amount === String(value) ? "is-selected" : ""} type="button" onClick={() => chooseAmount(value)} key={value}>{value}</button>)}</div>
+            <button className="primary-button request-submit" type="submit" disabled={capacityState === "testing" || network === "error" || network === "preview"}>{capacityState === "testing" ? "Checking CC3…" : "Check contract capacity"}<ArrowIcon /></button>
+            <div className={`contract-result contract-result--${currentOutcome.toLowerCase()}`}><RiskIcon /><div><strong>{currentOutcome} {capacityState === "complete" ? "BY CONTRACT" : "AT CURRENT CAPACITY"}</strong><p>{currentReason}</p></div></div>
+            {capacityMessage && <p className="form-message" role="alert">{capacityMessage}</p>}
+            <a className="underlined-link compare-link" href="#state-comparison">Compare with NORMAL state <ArrowIcon /></a>
+          </form>
+
+          <div className="pool-detail">
+            <section className="state-comparison" id="state-comparison">
+              <h2>Pool state comparison</h2>
+              <ComparisonRail label="NORMAL" block={comparison?.normal.blockNumber} reserve={comparison?.normal.reservePercent ?? 10} lendable={comparison?.normal.lendable ?? 90} outcome={comparison?.normal.outcome ?? (Number(amount) <= 90 ? "ALLOWED" : "BLOCKED")} amount={Number(amount) || 0} />
+              <ComparisonRail label={`CURRENT: ${snapshot.regime}`} block={comparison?.current.blockNumber} reserve={comparison?.current.reservePercent ?? snapshot.reservePercent} lendable={comparison?.current.lendable ?? snapshot.lendable} outcome={currentOutcome} amount={Number(amount) || 0} current />
+            </section>
+            <section className="evidence-path" id="evidence">
+              <h2>Why the reserve changed</h2>
+              <div className="evidence-stages">
+                <EvidenceStep icon={<EvidenceIcon />} title={`${snapshot.lateCount} late repayments`} meta="Ethereum Sepolia" href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" />
+                <EvidenceStep icon={<CheckIcon />} title="Attestcoin proof" meta="Verified on CC3" href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" />
+                <EvidenceStep icon={<RiskIcon />} title={`Gemini: ${snapshot.regime}`} meta={`${snapshot.confidencePercent}% confidence`} href="https://github.com/Alike001/proofreserve/blob/main/docs/build-slice-03.md" />
+                <EvidenceStep icon={<LockIcon />} title={`${snapshot.reservePercent}% enforced`} meta="ReserveController" href={transactionUrl || "https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md"} />
+              </div>
+              <div className="authority-note" id="decision"><span><RiskIcon /><b>AI recommends</b><small>Gemini selects only a policy-approved risk regime.</small></span><span><LockIcon /><b>Smart contract has final authority</b><small>The ReserveController validates and enforces the result.</small></span></div>
+            </section>
+          </div>
         </div>
-        <p>Hackathon-stage testnet software. Not audited for production funds.</p>
-      </div>
-    </footer>
+
+        <section className="enforcement-record" id="activity"><h2>Recent enforcement record</h2><div><span className="record-icon">↑</span><strong>Reserve increased</strong><span>CC3 Testnet</span><span>Epoch {snapshot.epoch}</span><code>{shortHash(snapshot.reserveTransactionHash || snapshot.decisionHash)}</code>{transactionUrl ? <a href={transactionUrl} target="_blank" rel="noreferrer">View transaction <ExternalIcon /></a> : <a href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" target="_blank" rel="noreferrer">View evidence <ExternalIcon /></a>}</div></section>
+      </main>
+    </div>
   );
+}
+
+function ComparisonRail({label, block, reserve, lendable, outcome, amount, current = false}: {label: string; block?: number; reserve: number; lendable: number; outcome: "ALLOWED" | "BLOCKED"; amount: number; current?: boolean}) {
+  return <div className={`comparison-rail ${current ? "comparison-rail--current" : ""}`}><div className="comparison-rail__header"><span className="state-label">{label}</span>{block && <small>Block #{block.toLocaleString()}</small>}<strong>{formatNumber(amount)} prUSD request: <b>{outcome}</b></strong></div><div className="compact-allocation"><span style={{width: `${reserve}%`}} /><i /><b>{formatNumber(reserve)} protected</b><em>{formatNumber(lendable)} lendable</em></div></div>;
+}
+
+function EvidenceStep({icon, title, meta, href}: {icon: ReactNode; title: string; meta: string; href: string}) {
+  return <a href={href} target="_blank" rel="noreferrer"><span>{icon}</span><strong>{title}</strong><small>{meta}</small><ExternalIcon /></a>;
+}
+
+function PoolNavIcon({kind}: {kind: string}) {
+  if (kind === "evidence") return <EvidenceIcon />;
+  if (kind === "decision") return <LockIcon />;
+  if (kind === "integration") return <ExternalIcon />;
+  if (kind === "activity") return <span className="nav-clock">◷</span>;
+  if (kind === "loan") return <span className="nav-doc">▤</span>;
+  return <span className="nav-home">⌂</span>;
+}
+
+function BrandMarkOnly() {
+  return <span className="brand-mark" aria-hidden="true"><i /><i /></span>;
 }

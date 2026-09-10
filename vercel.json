@@ -4,6 +4,9 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm run app:build",
   "outputDirectory": "dist/dashboard",
+  "rewrites": [
+    {"source": "/app", "destination": "/index.html"}
+  ],
   "env": {
     "VITE_CREDITCOIN_RPC_URL": "https://rpc.cc3-testnet.creditcoin.network",
     "VITE_EVIDENCE_REGISTRY_ADDRESS": "0xCd144E5C8FCB6b9b9C4fddC55C660A131C99659a",
