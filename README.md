@@ -2,6 +2,8 @@
 
 > Protected lending pools powered by verified cross-chain risk.
 
+**[Open the live CC3 dashboard](https://proofreserve.vercel.app)** · **[Inspect the canonical reserve transaction](https://creditcoin-testnet.blockscout.com/tx/0x300b1ad4e7f51da215b0630f370a73bef030c0e8c1e26ed80192e2cd8da77126)**
+
 ProofReserve is a Creditcoin DeFi application for operating lending pools that protect liquidity before borrower problems spread. It turns Attestcoin-verified borrower events from other chains into an AI-recommended safety reserve that Creditcoin contracts enforce.
 
 A pool with 100 test tokens may normally protect 10 and lend 90. When several related borrowers become late on Ethereum Sepolia, Attestcoin proves those events, Gemini identifies the portfolio pattern, and the Creditcoin controller can protect 40 instead. The AI cannot move funds or override contract policy.
@@ -9,6 +11,8 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 ## Status
 
 The complete MVP is live on Ethereum Sepolia and Creditcoin CC3 Testnet. Seven source transactions have been proven through Attestcoin and accepted on Creditcoin, a reviewed Gemini `STRESS` assessment has been enforced, and the pool now rejects the same 70 prUSD request it allowed before the reserve change. See the [public testnet evidence](docs/testnet-evidence.md) for contracts and transaction links.
+
+![ProofReserve live dashboard](docs/assets/screenshots/dashboard-live-desktop.png)
 
 ## Demonstration flow
 
@@ -79,6 +83,8 @@ Create a new auth key in [Google AI Studio](https://aistudio.google.com/app/apik
 - [Evidence-to-reserve agent slice](./docs/build-slice-04.md)
 - [Testnet deployment guide](./docs/deployment.md)
 - [Public testnet evidence](./docs/testnet-evidence.md)
+- [DoraHacks submission draft](./docs/submission/dorahacks-submission.md)
+- [Pitch deck](./docs/pitch-deck.pdf)
 - [Third-party notices](./THIRD_PARTY_NOTICES.md)
 
 Keep the Gemini key in the server-side environment only. Free-tier prompts may be used by Google to improve its products, so ProofReserve sends only public testnet aggregate features and no personal borrower data. Testnet deployments separately need a wallet that can sign transactions and faucet funds for Sepolia and CC3 gas; neither secret should ever be committed or pasted into an issue or chat.

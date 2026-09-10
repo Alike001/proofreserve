@@ -6,9 +6,9 @@
 - Phase 2, public Sepolia/CC3 deployment: complete.
 - Phase 3, seven-proof Attestcoin path: complete.
 - Phase 4, reviewed Gemini artifact and Creditcoin enforcement: complete.
-- Phase 5, live dashboard connection and final browser QA: in progress.
+- Phase 5, live dashboard connection and final browser QA: complete.
 - Phase 6, self-service pool creation: deferred until the judged path and submission assets are finished.
-- Phase 7, submission package: pending.
+- Phase 7, submission package: in progress — public repository, hosted dashboard, production screenshots, DoraHacks copy, logo, and pitch-deck PDF complete; demo video and participant-supplied team fields remain.
 
 ## Inputs
 
@@ -19,7 +19,7 @@
 - Existing implementation records: `docs/build-slice-01.md` through `docs/build-slice-06.md`.
 - Existing deployment guide: `docs/deployment.md`.
 - Existing code: Sepolia source loan book, Creditcoin evidence registry/controller/pool/test asset, Attestcoin worker, Gemini risk agent, deployment/demo scripts, and responsive dashboard.
-- Existing local verification: 25 Solidity tests, 14 risk tests, one worker durability test, strict TypeScript checks, and a production dashboard build.
+- Existing local verification: 25 Solidity tests, 16 risk tests, one worker durability test, strict TypeScript checks, and a production dashboard build.
 - Existing prototype: accepted desktop/mobile concepts and implemented browser renders under `design/`.
 
 ## Assumptions

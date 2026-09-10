@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">ProofReserve</title>
+  <desc id="desc">ProofReserve shield and wordmark on a dark background.</desc>
+  <rect width="1200" height="320" rx="48" fill="#071925"/>
+  <g transform="translate(70 54) scale(8.8)" fill="none" stroke="#ffb538" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.8 19 5.7v5.5c0 4.8-2.7 8.2-7 10-4.3-1.8-7-5.2-7-10V5.7L12 2.8Z"/>
+    <path d="m8.8 11.8 2.1 2.1 4.5-5"/>
+  </g>
+  <text x="330" y="196" fill="#f6f7fb" font-family="Arial, Helvetica, sans-serif" font-size="104" font-weight="700" letter-spacing="-4">ProofReserve</text>
+</svg>

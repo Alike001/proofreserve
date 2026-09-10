@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ProofReserve — BUIDL CTC 2026 Fall</title>
+  <style>
+    :root {
+      --ink: #f6f7fb;
+      --muted: #abc2d8;
+      --deep: #071925;
+      --panel: #0b2332;
+      --line: #24465b;
+      --mint: #66e7bb;
+      --amber: #ffb538;
+      --coral: #ff7474;
+      --blue: #58b9ff;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #020b11; color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { counter-reset: slide; }
+    .slide {
+      counter-increment: slide;
+      position: relative;
+      width: 13.333in;
+      height: 7.5in;
+      overflow: hidden;
+      padding: .55in .65in;
+      page-break-after: always;
+      background:
+        radial-gradient(circle at 85% 8%, rgba(88,185,255,.13), transparent 28%),
+        linear-gradient(135deg, #071925 0%, #06141e 100%);
+    }
+    .slide:last-child { page-break-after: auto; }
+    .slide::after { content: counter(slide, decimal-leading-zero); position: absolute; right: .5in; bottom: .28in; color: #68879b; font: 700 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .eyebrow { margin: 0 0 15px; color: var(--amber); font: 800 13px/1.1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .13em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 9.8in; margin-bottom: 24px; font-size: 62px; line-height: 1.02; letter-spacing: -.045em; }
+    h2 { max-width: 10.6in; margin-bottom: 18px; font-size: 42px; line-height: 1.06; letter-spacing: -.035em; }
+    h3 { margin-bottom: 8px; font-size: 19px; }
+    p { color: var(--muted); font-size: 20px; line-height: 1.42; }
+    .lead { max-width: 9.7in; font-size: 27px; line-height: 1.36; }
+    .small { font-size: 14px; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 21px; font-weight: 800; }
+    .logo svg { width: 34px; height: 34px; color: var(--amber); }
+    .topline { display: flex; align-items: center; justify-content: space-between; margin-bottom: .55in; }
+    .tag { padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--mint); font: 700 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .accent { color: var(--mint); }
+    .danger { color: var(--coral); }
+    .amber { color: var(--amber); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card { min-height: 1.35in; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: rgba(11,35,50,.82); }
+    .card p { margin-bottom: 0; font-size: 16px; }
+    .number { margin-bottom: 8px; color: var(--amber); font: 800 15px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .metric { color: var(--ink); font-size: 44px; font-weight: 800; letter-spacing: -.04em; }
+    .metric-label { color: var(--muted); font-size: 15px; }
+    .arrow { color: var(--muted); font-size: 40px; align-self: center; }
+    .state-flow { display: grid; grid-template-columns: 1fr .25fr 1fr; gap: 18px; margin-top: 30px; }
+    .state { padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
+    .bar { height: 15px; margin: 18px 0 12px; overflow: hidden; border-radius: 99px; background: var(--mint); }
+    .bar::before { content: ""; display: block; width: var(--reserve); height: 100%; background: var(--coral); }
+    .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; align-items: stretch; margin-top: 28px; }
+    .node { position: relative; min-height: 1.72in; padding: 17px 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .node:not(:last-child)::after { content: "→"; position: absolute; right: -18px; top: 45%; z-index: 2; color: var(--amber); font-size: 23px; }
+    .node h3 { font-size: 17px; }
+    .node p { font-size: 13px; line-height: 1.4; }
+    .pill { display: inline-block; margin-top: 8px; padding: 6px 9px; border-radius: 5px; background: rgba(102,231,187,.13); color: var(--mint); font: 800 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .quote { max-width: 10.5in; margin: .6in auto 0; font-size: 38px; line-height: 1.25; font-weight: 700; letter-spacing: -.025em; }
+    .quote::before { content: "“"; color: var(--amber); }
+    .quote::after { content: "”"; color: var(--amber); }
+    .proof-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 30px; align-items: center; }
+    .screenshot { width: 100%; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 24px 70px rgba(0,0,0,.35); }
+    .checks { display: grid; gap: 12px; }
+    .check { display: grid; grid-template-columns: 26px 1fr; gap: 10px; color: var(--ink); font-size: 17px; line-height: 1.35; }
+    .check i { display: grid; width: 22px; height: 22px; place-items: center; border-radius: 50%; background: rgba(102,231,187,.15); color: var(--mint); font-style: normal; font-weight: 900; }
+    .hash { margin-top: 18px; padding: 14px; border: 1px solid var(--line); border-radius: 9px; color: var(--blue); font: 600 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px; }
+    .roadmap .card { border-top: 4px solid var(--amber); }
+    .roadmap .card:nth-child(2) { border-top-color: var(--mint); }
+    .roadmap .card:nth-child(3) { border-top-color: var(--blue); }
+    .footer-link { position: absolute; left: .65in; bottom: .28in; color: var(--blue); font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    @page { size: 13.333in 7.5in; margin: 0; }
+    @media print { body { background: transparent; } }
+  </style>
+</head>
+<body>
+  <section class="slide">
+    <div class="topline">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.8 19 5.7v5.5c0 4.8-2.7 8.2-7 10-4.3-1.8-7-5.2-7-10V5.7L12 2.8Z" stroke="currentColor" stroke-width="1.8"/><path d="m8.8 11.8 2.1 2.1 4.5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ProofReserve
+      </div>
+      <span class="tag">DeFi · BUIDL CTC 2026 Fall</span>
+    </div>
+    <p class="eyebrow">Verified cross-chain risk · enforceable liquidity protection</p>
+    <h1>Protect a lending pool <span class="accent">before defaults spread.</span></h1>
+    <p class="lead">Attestcoin supplies proven facts. Gemini interprets the portfolio pattern. Creditcoin smart contracts retain final authority.</p>
+    <div class="footer-link">proofreserve.vercel.app</div>
+  </section>
+
+  <section class="slide">
+    <p class="eyebrow">The product in 30 seconds</p>
+    <h2>The same pool. The same loan request. A safer outcome.</h2>
+    <div class="state-flow">
+      <div class="state">
+        <p class="number">BEFORE · NORMAL</p>
+        <div class="metric">10%</div>
+        <div class="metric-label">protected reserve</div>
+        <div class="bar" style="--reserve:10%"></div>
+        <p><strong class="accent">90 prUSD</strong> lendable<br/>70 prUSD request: <strong class="accent">ALLOWED</strong></p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="state">
+        <p class="number">AFTER · STRESS</p>
+        <div class="metric danger">40%</div>
+        <div class="metric-label">protected reserve</div>
+        <div class="bar" style="--reserve:40%"></div>
+        <p><strong>60 prUSD</strong> lendable<br/>70 prUSD request: <strong class="danger">BLOCKED</strong></p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:24px">Four healthy payments plus two related late payments produced a real, policy-bounded reserve change on Creditcoin CC3.</p>
+  </section>
+
+  <section class="slide">
+    <p class="eyebrow">The gap</p>
+    <h2>Cross-chain lending is blind—or forced to trust a private reporter.</h2>
+    <div class="grid-3" style="margin-top:28px">
+      <div class="card"><div class="number">01</div><h3>Facts live elsewhere</h3><p>A Creditcoin pool cannot independently read whether a borrower paid late on Sepolia.</p></div>
+      <div class="card"><div class="number">02</div><h3>Risk is relational</h3><p>Two late borrowers in one economic group are more dangerous than two isolated late events.</p></div>
+      <div class="card"><div class="number">03</div><h3>AI should not hold the keys</h3><p>A flexible model can recognize the pattern, but deterministic contracts must control the money.</p></div>
+    </div>
+    <p class="quote">Verified facts in. Bounded reasoning. Contract-enforced consequences.</p>
+  </section>
+
+  <section class="slide">
+    <p class="eyebrow">Live architecture</p>
+    <h2>One auditable path from source receipt to lending capacity.</h2>
+    <div class="pipeline">
+      <div class="node"><div class="number">1 · SEPOLIA</div><h3>Loan events</h3><p>Four settled and two related late payments, plus a checkpoint.</p><span class="pill">REAL TXS</span></div>
+      <div class="node"><div class="number">2 · ATTESTCOIN</div><h3>Proven receipts</h3><p>Inclusion and continuity proofs are finalized through the native CC3 verifier.</p><span class="pill">7 PROOFS</span></div>
+      <div class="node"><div class="number">3 · EVIDENCE</div><h3>Typed facts</h3><p>Emitter, event, borrower, group, sequence, epoch, and replay state are checked.</p><span class="pill">ROOT-BOUND</span></div>
+      <div class="node"><div class="number">4 · GEMINI</div><h3>Bounded regime</h3><p>Structured output selects NORMAL, WATCH, STRESS, or CRISIS.</p><span class="pill">85% STRESS</span></div>
+      <div class="node"><div class="number">5 · CREDITCOIN</div><h3>Enforcement</h3><p>Policy checks raise the reserve and the pool rejects excess lending.</p><span class="pill">40% LOCKED</span></div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <p class="eyebrow">Why Attestcoin is indispensable</p>
+    <h2>A proof of a transaction is the beginning—not the end—of trusted financial evidence.</h2>
+    <div class="grid-2" style="margin-top:28px">
+      <div class="card">
+        <h3 class="danger">Without Attestcoin</h3>
+        <p>A private API says a borrower was late. The pool must trust the API operator, its infrastructure, and its interpretation of the source chain.</p>
+      </div>
+      <div class="card">
+        <h3 class="accent">With Attestcoin + ProofReserve</h3>
+        <p>Attestcoin proves the source receipt. ProofReserve verifies its exact business meaning before it can influence a reserve decision.</p>
+      </div>
+    </div>
+    <div class="checks" style="grid-template-columns:repeat(4,1fr); margin-top:28px">
+      <div class="check"><i>✓</i><span>Allowlisted source emitter</span></div>
+      <div class="check"><i>✓</i><span>Exact event signature</span></div>
+      <div class="check"><i>✓</i><span>Ordered checkpoint</span></div>
+      <div class="check"><i>✓</i><span>Replay rejection</span></div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <p class="eyebrow">Safe AI boundary</p>
+    <h2>Gemini explains the pattern. It never controls the funds.</h2>
+    <div class="grid-2" style="margin-top:28px">
+      <div>
+        <div class="card"><h3>AI may</h3><p>Interpret verified aggregate features, identify correlated deterioration, select one finite regime, and provide reason codes.</p></div>
+        <div class="card" style="margin-top:16px"><h3>AI may not</h3><p>Move tokens, choose arbitrary percentages, construct calls, rewrite evidence, bypass confidence, or silently lower protection.</p></div>
+      </div>
+      <div class="card" style="min-height:3.55in">
+        <p class="number">CREDITCOIN CONTRACT CHECKS</p>
+        <div class="checks">
+          <div class="check"><i>✓</i><span>Authorized assessment signer</span></div>
+          <div class="check"><i>✓</i><span>Matching evidence root and epoch</span></div>
+          <div class="check"><i>✓</i><span>Feature, model, and policy versions</span></div>
+          <div class="check"><i>✓</i><span>Minimum 60% model confidence</span></div>
+          <div class="check"><i>✓</i><span>Finite reserve bands: 10 / 20 / 40 / 60%</span></div>
+          <div class="check"><i>✓</i><span>Immediate increases; delayed decreases</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <p class="eyebrow">Public proof, not a staged demo</p>
+    <h2>The judged result is already live on testnet.</h2>
+    <div class="proof-layout">
+      <img class="screenshot" src="assets/screenshots/dashboard-live-desktop.png" alt="ProofReserve live dashboard" />
+      <div>
+        <div class="checks">
+          <div class="check"><i>✓</i><span>Ethereum Sepolia source loan book</span></div>
+          <div class="check"><i>✓</i><span>Seven Attestcoin proofs finalized on CC3</span></div>
+          <div class="check"><i>✓</i><span>Gemini inference mode recorded</span></div>
+          <div class="check"><i>✓</i><span>40% reserve enforced on Creditcoin</span></div>
+          <div class="check"><i>✓</i><span>70 prUSD capacity rejection reproduced</span></div>
+          <div class="check"><i>✓</i><span>25 Solidity + 17 worker/risk tests</span></div>
+        </div>
+        <div class="hash">CC3 TX<br/>0x300b1ad4e7f51da215b0630f370a73bef030c0e8c1e26ed80192e2cd8da77126</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <p class="eyebrow">From hackathon product to ecosystem infrastructure</p>
+    <h2>Make verified cross-chain risk protection reusable across Creditcoin.</h2>
+    <div class="roadmap">
+      <div class="card"><div class="number">NOW · PROVEN</div><h3>One protected pool</h3><p>Complete source-to-proof-to-AI-to-enforcement flow on Sepolia and CC3.</p></div>
+      <div class="card"><div class="number">NEXT · PRODUCTIZE</div><h3>Self-service pools</h3><p>Factories, operator onboarding, configurable evidence sources, policies, and monitoring.</p></div>
+      <div class="card"><div class="number">THEN · EXPAND</div><h3>Risk coordination layer</h3><p>Reusable protection for lending, undercollateralized credit, RWAs, and cross-chain liquidity.</p></div>
+    </div>
+    <p class="lead" style="margin-top:30px"><strong class="accent">CEIP fit:</strong> engineering support and ecosystem introductions can turn a validated CC3 workflow into infrastructure that brings lenders and real financial activity to Creditcoin.</p>
+    <div class="footer-link">github.com/Alike001/proofreserve · proofreserve.vercel.app</div>
+  </section>
+</body>
+</html>
