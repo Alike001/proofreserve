@@ -12,6 +12,8 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 
 The complete MVP is live on Ethereum Sepolia and Creditcoin CC3 Testnet. Seven source transactions have been proven through Attestcoin and accepted on Creditcoin, a reviewed Gemini `STRESS` assessment has been enforced, and the pool now rejects the same 70 prUSD request it allowed before the reserve change. See the [public testnet evidence](docs/testnet-evidence.md) for contracts and transaction links.
 
+The live product includes a no-wallet capacity test. Enter a proposed loan and the browser performs two read-only simulations of the deployed pool's `commitLoan` function: at the last normal-reserve block and at the latest block. Try 50 prUSD (allowed in both states), 70 prUSD (allowed before and blocked now), and 95 prUSD (blocked in both states).
+
 ![ProofReserve product landing page](docs/assets/screenshots/landing-live-desktop.png)
 
 ## Demonstration flow
@@ -21,7 +23,7 @@ The complete MVP is live on Ethereum Sepolia and Creditcoin CC3 Testnet. Seven s
 3. Let Attestcoin prove each fact and its checkpoint into Creditcoin.
 4. Let Gemini explain the combined risk pattern within a closed schema.
 5. Submit the assessment so the controller raises the protected reserve from 10% to 40%.
-6. Compare `pnpm capacity:check before` and `pnpm capacity:check after` to show the pool itself allowing and then blocking the same 70 prUSD request without mutating demo state.
+6. Use the live capacity test—or compare `pnpm capacity:check before` and `pnpm capacity:check after`—to show the pool itself allowing and then blocking the same 70 prUSD request without mutating demo state.
 
 In one sentence: **ProofReserve notices verified trouble elsewhere and makes a Creditcoin lending pool keep more cash safe.**
 
@@ -39,13 +41,13 @@ The hackathon MVP operates one fully verifiable protected pool. Repeatable self-
 
 `prUSD` is a test asset used to make the financial consequence visible. ProofReserve does not issue a production stablecoin and is not a generic token-creation platform.
 
-## Product dashboard
+## Product application
 
-Run the responsive dashboard locally:
+Run the responsive product locally:
 
     pnpm app:dev
 
-It opens in a truthfully labeled preview state until the public `VITE_CREDITCOIN_RPC_URL`, evidence, controller, and pool addresses are configured. Browser variables are public by definition: never place the Gemini key or a wallet private key behind a `VITE_` prefix.
+It opens in a truthfully labeled preview state until the public `VITE_CREDITCOIN_RPC_URL`, evidence, controller, and pool addresses are configured. Set `VITE_NORMAL_STATE_BLOCK` to the final normal-reserve block to enable the before/after capacity comparison. Browser variables are public by definition: never place the Gemini key or a wallet private key behind a `VITE_` prefix.
 
 Create the production bundle with:
 

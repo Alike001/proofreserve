@@ -10,9 +10,9 @@ interface HeaderProps {
 
 const items = [
   {label: "Product", target: "product"},
-  {label: "How it works", target: "how-it-works"},
+  {label: "Live pool", target: "capacity-lab"},
+  {label: "Evidence", target: "live-proof"},
   {label: "Safety", target: "safety"},
-  {label: "Live proof", target: "live-proof"}
 ];
 
 export function Header({status, onNavigate}: HeaderProps) {

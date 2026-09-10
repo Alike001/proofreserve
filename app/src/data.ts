@@ -1,4 +1,4 @@
-import {Contract, EventLog, JsonRpcProvider, formatUnits} from "ethers";
+import {Contract, EventLog, JsonRpcProvider, VoidSigner, formatUnits, parseUnits} from "ethers";
 
 const EVIDENCE_ABI = [
   "function currentEpoch() view returns (uint64)",
@@ -15,9 +15,15 @@ const CONTROLLER_ABI = [
   "event ReserveIncreased(bytes32 indexed decisionHash,uint8 indexed regime,uint16 reserveBps,uint64 indexed epoch,bytes32 evidenceRoot)"
 ];
 const POOL_ABI = [
+  "function owner() view returns (address)",
   "function totalManagedAssets() view returns (uint256)",
-  "function lendable() view returns (uint256)"
+  "function lendable() view returns (uint256)",
+  "function commitLoan(address borrower,uint256 amount)",
+  "error InsufficientLendable(uint256 available,uint256 requested)"
 ];
+
+const CANONICAL_NORMAL_BLOCK = 5_460_299;
+const CAPACITY_TEST_BORROWER = "0x000000000000000000000000000000000000B001";
 
 export type DataMode = "preview" | "live";
 
@@ -51,6 +57,20 @@ export interface DashboardSnapshot {
   decisionHash: string;
   reserveTransactionHash: string;
   records: AuditRecord[];
+}
+
+export interface CapacityState {
+  blockNumber: number;
+  reservePercent: number;
+  lendable: number;
+  outcome: "ALLOWED" | "BLOCKED";
+  reason: string;
+}
+
+export interface CapacityComparison {
+  amount: number;
+  normal: CapacityState;
+  current: CapacityState;
 }
 
 export const previewSnapshot: DashboardSnapshot = {
@@ -176,6 +196,79 @@ export async function loadDashboardSnapshot(): Promise<DashboardSnapshot> {
       regime
     )
   };
+}
+
+export async function simulateLoanCapacity(amount: number): Promise<CapacityComparison> {
+  if (!Number.isFinite(amount) || amount < 0.000001 || amount > 1_000_000) {
+    throw new Error("Enter a loan amount between 0.000001 and 1,000,000 prUSD.");
+  }
+
+  const config = requiredPublicConfig();
+  if (!config) throw new Error("Live Creditcoin configuration is unavailable.");
+
+  const provider = new JsonRpcProvider(config.rpcUrl);
+  const network = await provider.getNetwork();
+  if (Number(network.chainId) !== 102_031) {
+    throw new Error(`Expected Creditcoin CC3 chain 102031, received ${network.chainId.toString()}`);
+  }
+
+  const pool = new Contract(config.poolAddress, POOL_ABI, provider);
+  const controller = new Contract(config.controllerAddress, CONTROLLER_ABI, provider);
+  const [owner, currentBlock] = await Promise.all([
+    pool.getFunction("owner").staticCall(),
+    provider.getBlockNumber()
+  ]);
+  const normalBlock = Number(import.meta.env.VITE_NORMAL_STATE_BLOCK || CANONICAL_NORMAL_BLOCK);
+  if (!Number.isSafeInteger(normalBlock) || normalBlock <= 0 || normalBlock > currentBlock) {
+    throw new Error("The configured NORMAL reference block is invalid.");
+  }
+
+  const caller = new VoidSigner(String(owner), provider);
+  const poolAsOwner = pool.connect(caller) as Contract;
+  const requested = parseUnits(amount.toFixed(6), 18);
+
+  const testState = async (blockNumber: number): Promise<CapacityState> => {
+    const [reserveBps, available] = await Promise.all([
+      controller.getFunction("activeReserveBps").staticCall({blockTag: blockNumber}),
+      pool.getFunction("lendable").staticCall({blockTag: blockNumber})
+    ]);
+
+    try {
+      await poolAsOwner.getFunction("commitLoan").staticCall(
+        CAPACITY_TEST_BORROWER,
+        requested,
+        {blockTag: blockNumber}
+      );
+      return {
+        blockNumber,
+        reservePercent: Number(reserveBps) / 100,
+        lendable: Number(formatUnits(available, 18)),
+        outcome: "ALLOWED",
+        reason: "The request fits inside the contract's lendable capacity."
+      };
+    } catch (error) {
+      const revertName = readRevertName(error);
+      if (revertName !== "InsufficientLendable") throw error;
+      return {
+        blockNumber,
+        reservePercent: Number(reserveBps) / 100,
+        lendable: Number(formatUnits(available, 18)),
+        outcome: "BLOCKED",
+        reason: "The request exceeds the capacity left after the protected reserve."
+      };
+    }
+  };
+
+  const [normal, current] = await Promise.all([testState(normalBlock), testState(currentBlock)]);
+  return {amount, normal, current};
+}
+
+function readRevertName(error: unknown): string {
+  if (!error || typeof error !== "object") return "";
+  const candidate = error as {revert?: {name?: unknown}; info?: {error?: {data?: {name?: unknown}}}};
+  if (typeof candidate.revert?.name === "string") return candidate.revert.name;
+  if (typeof candidate.info?.error?.data?.name === "string") return candidate.info.error.data.name;
+  return "";
 }
 
 function buildRecords(

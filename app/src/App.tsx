@@ -1,13 +1,16 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, type FormEvent} from "react";
 
 import {AuditLedger} from "./components/AuditLedger";
 import {Header, type NetworkStatus} from "./components/Header";
 import {ReserveShift} from "./components/ReserveShift";
 import {Workflow} from "./components/Workflow";
 import {
+  formatNumber,
   hasLiveConfiguration,
   loadDashboardSnapshot,
   previewSnapshot,
+  simulateLoanCapacity,
+  type CapacityComparison,
   type DashboardSnapshot
 } from "./data";
 import {ArrowIcon, CheckIcon, EvidenceIcon, ExternalIcon, LockIcon, RiskIcon} from "./icons";
@@ -57,6 +60,7 @@ export function App() {
       <Header status={networkStatus} onNavigate={navigate} />
       <main id="main-content">
         <MarketingHero snapshot={snapshot} networkStatus={networkStatus} onNavigate={navigate} />
+        <CapacityLab snapshot={snapshot} networkStatus={networkStatus} />
         <ProtocolRail />
         <ProblemSection />
         <HowItWorks />
@@ -102,8 +106,8 @@ function MarketingHero({snapshot, networkStatus, onNavigate}: HeroProps) {
           ProofReserve turns verified repayment activity from other chains into policy-controlled liquidity protection on Creditcoin.
         </p>
         <div className="hero-actions">
-          <button className="button button--primary" type="button" onClick={() => onNavigate("live-proof")}>
-            Explore the live proof <ArrowIcon />
+          <button className="button button--primary" type="button" onClick={() => onNavigate("capacity-lab")}>
+            Test the live pool <ArrowIcon />
           </button>
           <a className="text-link" href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" target="_blank" rel="noreferrer">
             Read the evidence <ExternalIcon />
@@ -130,6 +134,167 @@ function MarketingHero({snapshot, networkStatus, onNavigate}: HeroProps) {
         </div>
       </div>
     </section>
+  );
+}
+
+type CapacityTestState = "idle" | "testing" | "complete" | "error";
+
+function CapacityLab({snapshot, networkStatus}: {snapshot: DashboardSnapshot; networkStatus: NetworkStatus}) {
+  const [amount, setAmount] = useState("70");
+  const [state, setState] = useState<CapacityTestState>("idle");
+  const [result, setResult] = useState<CapacityComparison | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  async function runCapacityTest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setState("testing");
+    setErrorMessage("");
+    try {
+      const parsedAmount = Number(amount);
+      const next = await simulateLoanCapacity(parsedAmount);
+      setResult(next);
+      setState("complete");
+    } catch (error) {
+      setResult(null);
+      setState("error");
+      setErrorMessage(error instanceof Error ? error.message : "Creditcoin could not complete the capacity test.");
+    }
+  }
+
+  function chooseAmount(next: number) {
+    setAmount(String(next));
+    setState("idle");
+    setResult(null);
+    setErrorMessage("");
+  }
+
+  const changed = result && result.normal.outcome !== result.current.outcome;
+
+  return (
+    <section className="capacity-section" id="capacity-lab">
+      <div className="page-shell capacity-shell">
+        <div className="workspace-heading">
+          <div>
+            <span className="section-index">Live pool / CC3 testnet</span>
+            <h2>Would the pool approve this loan?</h2>
+          </div>
+          <p>Choose an amount. ProofReserve asks the deployed contract twice: once before the verified warning and once after it.</p>
+        </div>
+
+        <div className="capacity-workspace">
+          <form className="capacity-form" onSubmit={runCapacityTest}>
+            <div className="capacity-form__topline">
+              <div>
+                <span className="micro-label">Capacity test</span>
+                <strong>Proposed loan</strong>
+              </div>
+              <ConnectionLabel status={networkStatus} />
+            </div>
+            <label className="amount-field">
+              <span>Loan amount</span>
+              <div className="amount-field__control">
+                <input
+                  type="number"
+                  min="0.000001"
+                  max="1000000"
+                  step="any"
+                  inputMode="decimal"
+                  value={amount}
+                  onChange={(event) => {
+                    setAmount(event.target.value);
+                    setState("idle");
+                    setResult(null);
+                    setErrorMessage("");
+                  }}
+                  aria-describedby="capacity-help"
+                  disabled={state === "testing"}
+                />
+                <span>prUSD</span>
+              </div>
+            </label>
+            <div className="amount-presets" aria-label="Suggested loan amounts">
+              {[50, 70, 95].map((preset) => (
+                <button
+                  type="button"
+                  className={amount === String(preset) ? "is-selected" : ""}
+                  onClick={() => chooseAmount(preset)}
+                  disabled={state === "testing"}
+                  key={preset}
+                >
+                  {preset} prUSD
+                </button>
+              ))}
+            </div>
+            <p className="capacity-help" id="capacity-help">No wallet, gas, or browser calculation. Both results come from real CC3 contract simulations.</p>
+            <button className="button button--primary capacity-submit" type="submit" disabled={state === "testing" || networkStatus !== "live"}>
+              {state === "testing" ? "Testing on CC3…" : "Test lending capacity"}<ArrowIcon />
+            </button>
+            <p className={`capacity-status capacity-status--${state}`} role="status">
+              {state === "error" ? errorMessage : state === "complete" ? "Two contract simulations completed." : ""}
+            </p>
+          </form>
+
+          <div className={`capacity-results capacity-results--${state}`} aria-live="polite">
+            {state === "testing" ? (
+              <CapacitySkeleton />
+            ) : result ? (
+              <>
+                <CapacityResultCard label="Before verified stress" state={result.normal} amount={result.amount} />
+                <div className={`capacity-verdict ${changed ? "capacity-verdict--changed" : ""}`}>
+                  <span>{changed ? "Decision changed" : "Decision unchanged"}</span>
+                  <strong>{changed ? "Attested risk now prevents this loan." : "The reserve does not change this amount's outcome."}</strong>
+                  <p>This is a read-only simulation of the deployed <code>commitLoan</code> function. No demo state was changed.</p>
+                </div>
+                <CapacityResultCard label="After verified stress" state={result.current} amount={result.amount} current />
+              </>
+            ) : (
+              <div className="capacity-empty">
+                <span className="capacity-empty__mark">70</span>
+                <div><strong>Start with 70 prUSD</strong><p>It fits when the pool protects 10%, but fails after the reserve rises to 40%.</p></div>
+              </div>
+            )}
+          </div>
+
+          <aside className="capacity-evidence" aria-label="Current decision summary">
+            <div className="capacity-evidence__header"><span>Why the pool changed</span><span>Epoch {snapshot.epoch}</span></div>
+            <EvidenceSummary index="01" label="Attestcoin evidence" value={`${snapshot.factCount} facts verified`} detail={`${snapshot.settledCount} settled · ${snapshot.lateCount} late`} />
+            <EvidenceSummary index="02" label="Bounded assessment" value={`${snapshot.regime} · ${snapshot.confidencePercent}%`} detail="Gemini recommendation" />
+            <EvidenceSummary index="03" label="Contract response" value={`${snapshot.reservePercent}% protected`} detail={`${snapshot.lendable} prUSD remains lendable`} />
+            <a className="capacity-evidence__link" href="#live-proof">Inspect every proof <ArrowIcon /></a>
+          </aside>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CapacityResultCard({label, state, amount, current = false}: {label: string; state: CapacityComparison["normal"]; amount: number; current?: boolean}) {
+  return (
+    <article className={`capacity-result ${current ? "capacity-result--current" : ""}`}>
+      <div className="capacity-result__header"><span>{label}</span><small>block {state.blockNumber.toLocaleString()}</small></div>
+      <div className="capacity-result__amount"><strong>{formatNumber(amount)}</strong><span>prUSD request</span></div>
+      <div className={`capacity-result__outcome capacity-result__outcome--${state.outcome.toLowerCase()}`}>
+        <i /> {state.outcome}
+      </div>
+      <dl>
+        <div><dt>Protected</dt><dd>{formatNumber(state.reservePercent)}%</dd></div>
+        <div><dt>Lendable</dt><dd>{formatNumber(state.lendable)} prUSD</dd></div>
+      </dl>
+      <p>{state.reason}</p>
+    </article>
+  );
+}
+
+function CapacitySkeleton() {
+  return <div className="capacity-skeleton" aria-label="Testing both contract states"><i /><i /><i /><i /></div>;
+}
+
+function EvidenceSummary({index, label, value, detail}: {index: string; label: string; value: string; detail: string}) {
+  return (
+    <div className="evidence-summary">
+      <span>{index}</span>
+      <div><small>{label}</small><strong>{value}</strong><p>{detail}</p></div>
+    </div>
   );
 }
 
