@@ -14,12 +14,14 @@ The complete MVP is live on Ethereum Sepolia and Creditcoin CC3 Testnet. Fourtee
 
 The live product includes a no-wallet capacity test. Enter a proposed loan and the browser performs two read-only simulations of the deployed pool's `commitLoan` function: at the last normal-reserve block and at the latest block. Try 50 prUSD (allowed in both states), 70 prUSD (allowed before and blocked now), and 95 prUSD (blocked in both states).
 
+The pool-manager desk adds a permissioned write workflow for the deployed pool. The connected wallet must match the pool owner. It switches or adds Creditcoin CC3, validates the borrower and amount, performs a live `commitLoan` preflight, asks the wallet to sign only after that check passes, waits for the CC3 receipt, and exposes a cancellation action that restores capacity. A commitment reserves lending capacity but does not transfer pool funds.
+
 ![ProofReserve product landing page](docs/assets/screenshots/landing-live-desktop.png)
 
 ## Demonstration flow
 
 1. Fund a 100 prUSD pool on Creditcoin.
-2. Record four healthy payments and two related late payments on Sepolia.
+2. Record four small successful payments and two much larger late payments across separate borrower groups on Sepolia.
 3. Let Attestcoin prove each fact and its checkpoint into Creditcoin.
 4. Let Gemini explain the combined risk pattern within a closed schema.
 5. Submit the assessment so the controller raises the protected reserve from 10% to 40%.
@@ -48,6 +50,8 @@ Run the responsive product locally:
     pnpm app:dev
 
 It opens in a truthfully labeled preview state until the public `VITE_CREDITCOIN_RPC_URL`, evidence, controller, and pool addresses are configured. Set `VITE_NORMAL_STATE_BLOCK` to the final normal-reserve block to enable the before/after capacity comparison. Browser variables are public by definition: never place the Gemini key or a wallet private key behind a `VITE_` prefix.
+
+To test the write workflow, connect the funded Creditcoin deployer wallet on the manager desk. For the public deployment in this repository, the expected owner is `0x7a490B6b4079E90C228d5CABb58bbedc9a51312b`. Use the prefilled test borrower, commit no more than the displayed lendable amount, and cancel the commitment after testing. Never enter or expose the wallet's private key in the application.
 
 Create the production bundle with:
 

@@ -18,7 +18,7 @@ Protected lending pools powered by verified cross-chain risk.
 
 ProofReserve helps a Creditcoin lending pool protect liquidity before borrower problems spread across a portfolio.
 
-In the live testnet scenario, a pool starts with 100 prUSD, protects 10%, and can lend 90. Four healthy payments and two late payments from related borrowers are recorded on Ethereum Sepolia. Attestcoin proves those source-chain transactions into Creditcoin. Gemini interprets the combined pattern as correlated stress, but it can select only a policy-approved risk regime. The Creditcoin controller retains final authority and raises the protected reserve to 40%. The same 70 prUSD loan request that previously fit is then rejected because only 60 remains lendable.
+In the live testnet scenario, a pool starts with 100 prUSD, protects 10%, and can lend 90. Four small repayments worth 40 total and two large late repayments worth 500 total are recorded across separate borrower groups on Ethereum Sepolia. Attestcoin proves those source-chain transactions into Creditcoin. A disclosed count-only baseline returns `WATCH`; Gemini recognizes the value-weighted danger and recommends `STRESS` with 82% confidence. The Creditcoin controller retains final authority, validates the exact decision, and raises the protected reserve to 40%. The same 70 prUSD loan request that previously fit is then rejected because only 60 remains lendable.
 
 ProofReserve is a working DeFi product flow rather than an AI-controlled wallet or an oracle dashboard: verified external evidence changes an enforceable financial limit on Creditcoin.
 
@@ -32,7 +32,7 @@ Without Attestcoin, the pool would have to trust a centralized operator's report
 
 ## Why it matters
 
-Cross-chain credit systems often evaluate risk from isolated feeds or simplistic thresholds. That can miss a portfolio pattern: two late payments may be much more dangerous when both borrowers belong to the same economic group. ProofReserve combines verified cross-chain facts with bounded AI reasoning, then lets deterministic contracts control the money.
+Cross-chain credit systems often evaluate risk from isolated feeds or simplistic count thresholds. That can miss severity: two late payments worth 500 can be much more dangerous than four successful payments worth only 40. ProofReserve combines verified cross-chain facts with bounded AI reasoning, then lets deterministic contracts control the money.
 
 The product direction is reusable risk infrastructure for Creditcoin lending operators. New pools could configure their own source loan books and reserve policies while sharing the same Attestcoin-to-enforcement pipeline. The hackathon MVP truthfully demonstrates one deployed pool; self-service pool creation is roadmap work.
 
@@ -45,6 +45,8 @@ The product direction is reusable risk infrastructure for Creditcoin lending ope
 - Four contract-approved regimes: NORMAL, WATCH, STRESS, and CRISIS.
 - A 100 prUSD test pool whose reserve changed from 10% to 40%.
 - A contract-level capacity check showing 70 prUSD allowed before and rejected after.
+- A permissioned pool-manager workflow for preflight, commitment, CC3 receipt inspection, and safe cancellation.
+- A no-key `pnpm verify:live` command with 64 public cross-chain and contract checks.
 - A public responsive dashboard that reads the live CC3 contracts.
 - Restart/idempotence, policy-boundary, signature, freshness, replay, and reconciliation tests.
 
@@ -59,7 +61,7 @@ Ethereum Sepolia SourceLoanBook
   -> Gemini structured regime recommendation
   -> ReserveController deterministic policy checks
   -> ProofReservePool enforceable lending capacity
-  -> public live dashboard
+  -> public live dashboard + owner-gated manager desk
 ```
 
 ## Trust boundary
@@ -75,7 +77,7 @@ Ethereum Sepolia SourceLoanBook
 - Repository: https://github.com/Alike001/proofreserve
 - Live dashboard: https://proofreserve.vercel.app
 - Testnet evidence index: https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md
-- Canonical CC3 enforcement transaction: https://creditcoin-testnet.blockscout.com/tx/0x300b1ad4e7f51da215b0630f370a73bef030c0e8c1e26ed80192e2cd8da77126
+- Canonical CC3 enforcement transaction: https://creditcoin-testnet.blockscout.com/tx/0xfc25a12816d9967db8c414832c0f0771e4fd7ae013d055bc586ef39c7fc8c83e
 - Pitch deck PDF: https://github.com/Alike001/proofreserve/raw/main/docs/pitch-deck.pdf
 - Demo video: TODO — add public video URL after recording and upload.
 - Project logo: https://raw.githubusercontent.com/Alike001/proofreserve/main/docs/assets/brand/proofreserve-logo.svg
@@ -84,10 +86,11 @@ Ethereum Sepolia SourceLoanBook
 
 1. **0:00–0:10 — Problem:** A Creditcoin pool cannot safely react to repayment trouble on another chain if it must trust a private API.
 2. **0:10–0:25 — Normal state:** Show 100 prUSD managed, 10% protected, 90 lendable, and a 70 prUSD request allowed.
-3. **0:25–0:43 — Proven facts:** Show four settled and two related late Sepolia payments, then the Attestcoin proof manifest and CC3 checkpoint.
-4. **0:43–0:58 — Bounded AI:** Show Gemini selecting STRESS with 85% confidence because lateness is concentrated in one borrower group. Explain that AI cannot move money.
-5. **0:58–1:15 — Enforcement:** Show the canonical CC3 transaction, 40% reserve, 60 lendable, and the same 70 prUSD request blocked by the contract.
-6. **1:15–1:30 — Close:** “Attestcoin supplies proven facts, AI interprets them, and Creditcoin contracts retain final authority.”
+3. **0:22–0:38 — Proven facts:** Show four settled payments worth 40 and two late payments worth 500, then the Attestcoin proof manifest and CC3 checkpoint.
+4. **0:38–0:52 — Why AI matters:** Show count-only `WATCH` beside Gemini `STRESS` at 82% confidence. Explain that AI cannot move money.
+5. **0:52–1:05 — Enforcement:** Show the canonical CC3 transaction, 40% reserve, 60 lendable, and the same 70 prUSD request blocked by the contract.
+6. **1:05–1:20 — Product action:** Connect the owner wallet, preflight an allowed 50 prUSD commitment, show the CC3 receipt, then cancel to restore capacity.
+7. **1:20–1:30 — Close:** “Attestcoin supplies proven facts, AI interprets them, and Creditcoin contracts retain final authority.”
 
 ## Reproduction and testing
 
@@ -96,6 +99,7 @@ git clone https://github.com/Alike001/proofreserve.git
 cd proofreserve
 pnpm install
 pnpm check
+pnpm verify:live
 pnpm app:dev
 ```
 

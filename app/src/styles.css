@@ -219,7 +219,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .managed-capacity .state-label { display: none; }
 .managed-capacity .allocation__bar { height: 48px; }
 .pool-workspace { display: grid; grid-template-columns: minmax(310px, .72fr) minmax(600px, 1.6fr); gap: 13px; margin-top: 21px; }
-.request-panel, .state-comparison, .evidence-path, .enforcement-record { border: 1px solid var(--line-strong); border-radius: 11px; background: rgba(8,19,34,.76); }
+.request-panel, .state-comparison, .evidence-path, .manager-desk, .enforcement-record { border: 1px solid var(--line-strong); border-radius: 11px; background: rgba(8,19,34,.76); }
 .request-panel { scroll-margin-top: 86px; padding: 23px; }
 .request-panel h2, .state-comparison h2, .evidence-path h2, .enforcement-record h2, .enforcement-record h2, .enforcement-record h2 { margin: 0; font-size: 17px; }
 .request-panel > p { margin: 8px 0 24px; color: var(--muted); font-size: 11px; }
@@ -292,6 +292,67 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .authority-note svg { width: 25px; grid-row: 1 / 3; color: var(--blue-light); }
 .authority-note b { font-size: 10px; }
 .authority-note small { color: var(--muted); font-size: 8px; }
+.manager-desk { scroll-margin-top: 86px; margin-top: 13px; overflow: hidden; }
+.manager-desk__header { min-height: 74px; display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 14px 23px; border-bottom: 1px solid var(--line); }
+.manager-desk__header h2 { margin: 0; font-size: 17px; }
+.manager-desk__header p { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
+.manager-access { min-height: 31px; display: inline-flex; align-items: center; gap: 8px; padding: 0 11px; border: 1px solid var(--line-strong); border-radius: 5px; color: #aebbd1; font: 500 9px/1 DM Mono, monospace; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+.manager-access i { width: 7px; height: 7px; border-radius: 50%; background: var(--quiet); }
+.manager-access--owner { border-color: rgba(92,233,193,.4); color: var(--mint); }
+.manager-access--owner i { background: var(--mint); box-shadow: 0 0 10px rgba(92,233,193,.5); }
+.manager-desk__body { display: grid; grid-template-columns: 1.08fr .92fr; }
+.manager-form { display: grid; gap: 9px; padding: 21px 23px 23px; border-right: 1px solid var(--line); }
+.manager-form > label, .manager-form__amounts label > span { color: #a8b4c8; font-size: 9px; }
+.manager-form > input, .manager-form__amounts label > div { min-height: 43px; display: flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 6px; background: rgba(4,10,18,.72); }
+.manager-form > input { width: 100%; padding: 0 12px; outline: 0; color: white; font: 500 11px/1 DM Mono, monospace; }
+.manager-form > input:focus, .manager-form__amounts label > div:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(57,121,255,.1); }
+.manager-form > input:disabled, .manager-form__amounts input:disabled { cursor: not-allowed; opacity: .62; }
+.manager-form__account { min-height: 39px; display: grid; grid-template-columns: auto 1fr auto; gap: 11px; align-items: center; margin-bottom: 5px; padding-bottom: 13px; border-bottom: 1px solid var(--line); }
+.manager-form__account > span { color: var(--muted); font-size: 9px; }
+.manager-form__account > strong { font: 500 10px/1 DM Mono, monospace; }
+.manager-form__account button { padding: 7px 10px; border: 1px solid rgba(57,121,255,.48); border-radius: 5px; background: rgba(57,121,255,.11); color: var(--blue-light); cursor: pointer; font-size: 9px; font-weight: 700; }
+.manager-form__account button:disabled { cursor: wait; opacity: .55; }
+.manager-form__amounts { display: grid; grid-template-columns: 1fr .7fr .8fr; gap: 9px; align-items: end; margin-top: 2px; }
+.manager-form__amounts label { display: grid; gap: 8px; }
+.manager-form__amounts label > div { padding: 0 11px; }
+.manager-form__amounts input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: white; font-size: 17px; font-weight: 700; }
+.manager-form__amounts b { color: var(--muted); font-size: 9px; }
+.manager-form__amounts > span { min-height: 43px; display: grid; align-content: center; gap: 4px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; }
+.manager-form__amounts > span small { color: var(--quiet); font-size: 8px; }
+.manager-form__amounts > span strong { color: #d5dcec; font-size: 9px; }
+.manager-preflight { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; margin-top: 5px; border: 1px solid var(--blue); border-radius: 6px; background: var(--blue); color: white; cursor: pointer; font-size: 10px; font-weight: 700; }
+.manager-preflight svg { width: 13px; }
+.manager-preflight:disabled { cursor: not-allowed; filter: grayscale(.45); opacity: .45; }
+.manager-execution { display: grid; grid-template-rows: auto 1fr; padding: 21px 23px 23px; background: linear-gradient(135deg, rgba(57,121,255,.035), transparent 50%); }
+.manager-steps { display: grid; grid-template-columns: repeat(3, 1fr); }
+.manager-step { position: relative; display: grid; justify-items: center; gap: 7px; color: var(--quiet); text-align: center; }
+.manager-step::after { position: absolute; top: 13px; left: calc(50% + 18px); width: calc(100% - 36px); height: 1px; background: var(--line-strong); content: ""; }
+.manager-step:last-child::after { display: none; }
+.manager-step i { position: relative; z-index: 1; width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--ink-soft); font: 500 9px/1 DM Mono, monospace; font-style: normal; }
+.manager-step i svg { width: 13px; }
+.manager-step b { font-size: 8px; font-weight: 500; }
+.manager-step--complete { color: var(--mint); }
+.manager-step--complete i { border-color: var(--mint); background: rgba(92,233,193,.08); }
+.manager-step--complete::after { background: rgba(92,233,193,.45); }
+.manager-message { min-height: 98px; display: grid; grid-template-columns: 38px 1fr; gap: 13px; align-content: center; align-items: center; margin-top: 18px; padding: 15px; border: 1px solid var(--line); border-radius: 7px; background: rgba(4,10,18,.64); }
+.manager-message > span { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--blue-light); }
+.manager-message svg { width: 18px; }
+.manager-message strong { display: block; color: #d9e0ed; font-size: 10px; line-height: 1.45; }
+.manager-message p { margin: 6px 0 0; color: var(--muted); font-size: 9px; line-height: 1.5; }
+.manager-message--approved, .manager-message--success { border-color: rgba(92,233,193,.35); }
+.manager-message--approved > span, .manager-message--success > span { border-color: var(--mint); color: var(--mint); }
+.manager-message--error { border-color: rgba(255,119,117,.45); }
+.manager-message--error > span { border-color: var(--coral); color: var(--coral); }
+.manager-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
+.manager-actions button, .manager-actions a { min-height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 5px; background: transparent; color: #b9c5d8; cursor: pointer; font-size: 9px; font-weight: 700; text-decoration: none; }
+.manager-actions .manager-commit { border-color: rgba(92,233,193,.45); background: rgba(92,233,193,.1); color: var(--mint); }
+.manager-actions .manager-cancel { border-color: rgba(255,119,117,.42); color: var(--coral); }
+.manager-actions button:disabled { cursor: not-allowed; opacity: .4; }
+.manager-actions svg { width: 11px; }
+.manager-transaction { display: grid; grid-template-columns: 1fr auto 13px; gap: 9px; align-items: center; margin-top: 11px; padding: 9px 11px; border: 1px solid rgba(92,233,193,.26); border-radius: 5px; color: var(--mint); font-size: 8px; text-decoration: none; }
+.manager-transaction code { color: #cad5e7; font: 500 8px/1 DM Mono, monospace; }
+.manager-transaction svg { width: 11px; }
+.manager-warning { margin: 10px 0 0; color: var(--quiet); font-size: 8px; line-height: 1.5; }
 .enforcement-record { scroll-margin-top: 86px; margin-top: 13px; padding: 15px 23px; }
 .enforcement-record > div { min-height: 45px; display: grid; grid-template-columns: 36px 1fr .7fr .55fr 1fr auto; gap: 14px; align-items: center; margin-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
 .record-icon { width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid var(--blue); border-radius: 50%; color: var(--blue-light); }
@@ -319,6 +380,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   .ai-difference__flow { grid-template-columns: 1fr 18px 1fr; }
   .ai-difference__flow > i:nth-of-type(2) { display: none; }
   .ai-difference__contract { grid-column: 1 / -1; }
+  .manager-desk__body { grid-template-columns: 1fr; }
+  .manager-form { border-right: 0; border-bottom: 1px solid var(--line); }
 }
 
 @media (max-width: 900px) {
@@ -415,6 +478,13 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   .ai-difference__flow article > small, .ai-difference__flow article > p, .ai-difference__flow article > b { font-size: 9px; }
   .authority-note { grid-template-columns: 1fr; }
   .authority-note > span + span { border-top: 1px solid var(--line); border-left: 0; }
+  .manager-desk__header { align-items: flex-start; flex-direction: column; gap: 13px; }
+  .manager-desk__body { grid-template-columns: 1fr; }
+  .manager-form__account { grid-template-columns: 1fr auto; }
+  .manager-form__account > span { grid-column: 1 / -1; }
+  .manager-form__amounts { grid-template-columns: 1fr 1fr; }
+  .manager-form__amounts label { grid-column: 1 / -1; }
+  .manager-execution { padding-inline: 17px; }
   .enforcement-record > div { grid-template-columns: 34px 1fr auto; }
   .enforcement-record > div > span:nth-of-type(2), .enforcement-record > div > span:nth-of-type(3), .enforcement-record code { display: none; }
 }

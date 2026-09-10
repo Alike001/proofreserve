@@ -11,13 +11,10 @@ import {
   type DashboardSnapshot
 } from "./data";
 import {ArrowIcon, CheckIcon, EvidenceIcon, ExternalIcon, LockIcon, RiskIcon} from "./icons";
+import {ManagerDesk} from "./components/ManagerDesk";
 
 type NetworkState = "loading" | "live" | "preview" | "error";
 type CapacityState = "idle" | "testing" | "complete" | "error";
-
-interface InjectedWallet {
-  request(args: {method: string; params?: unknown[]}): Promise<unknown>;
-}
 
 export function App() {
   const [snapshot, setSnapshot] = useState<DashboardSnapshot>(previewSnapshot);
@@ -257,7 +254,7 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
   const [capacityState, setCapacityState] = useState<CapacityState>("idle");
   const [comparison, setComparison] = useState<CapacityComparison | null>(null);
   const [capacityMessage, setCapacityMessage] = useState("");
-  const [wallet, setWallet] = useState("");
+  const [managerLendable, setManagerLendable] = useState<number | null>(null);
   const explorerBaseUrl = import.meta.env.VITE_CC3_EXPLORER_TX_URL?.trim() || "";
   const transactionUrl = explorerBaseUrl && snapshot.reserveTransactionHash ? `${explorerBaseUrl}${snapshot.reserveTransactionHash}` : "";
 
@@ -283,23 +280,9 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
     setCapacityMessage("");
   }
 
-  async function connectWallet() {
-    const provider = (window as Window & {ethereum?: InjectedWallet}).ethereum;
-    if (!provider) {
-      setWallet("Install a wallet");
-      return;
-    }
-    try {
-      const accounts = await provider.request({method: "eth_requestAccounts"});
-      const first = Array.isArray(accounts) && typeof accounts[0] === "string" ? accounts[0] : "";
-      setWallet(first ? `${first.slice(0, 6)}…${first.slice(-4)}` : "Connected");
-    } catch {
-      setWallet("Connection declined");
-    }
-  }
-
-  const currentOutcome = comparison?.current.outcome ?? (Number(amount) <= snapshot.lendable ? "ALLOWED" : "BLOCKED");
-  const currentReason = comparison?.current.reason ?? (currentOutcome === "BLOCKED" ? `Only ${formatNumber(snapshot.lendable)} prUSD is available to lend.` : "This request fits inside current lendable capacity.");
+  const liveLendable = managerLendable ?? snapshot.lendable;
+  const currentOutcome = comparison?.current.outcome ?? (Number(amount) <= liveLendable ? "ALLOWED" : "BLOCKED");
+  const currentReason = comparison?.current.reason ?? (currentOutcome === "BLOCKED" ? `Only ${formatNumber(liveLendable)} prUSD is available to lend.` : "This request fits inside current lendable capacity.");
 
   return (
     <div className="pool-app">
@@ -311,6 +294,7 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
           <a href="#loan-desk"><PoolNavIcon kind="loan" />Loan desk</a>
           <a href="#evidence"><PoolNavIcon kind="evidence" />Evidence</a>
           <a href="#decision"><PoolNavIcon kind="decision" />Decision</a>
+          <a href="#manager"><PoolNavIcon kind="manager" />Pool manager</a>
           <a href="#activity"><PoolNavIcon kind="activity" />Activity</a>
           <a href="https://github.com/Alike001/proofreserve/blob/main/docs/product-spec.md" target="_blank" rel="noreferrer"><PoolNavIcon kind="integration" />Integration</a>
         </nav>
@@ -319,12 +303,12 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
       <header className="app-topbar">
         <button className="mobile-home" type="button" onClick={onHome}><BrandMarkOnly />ProofReserve</button>
         <span className={`app-network app-network--${network}`}><i />Creditcoin CC3</span>
-        <button className="wallet-button" type="button" onClick={() => void connectWallet()}>{wallet || "Connect wallet"}</button>
+        <button className="wallet-button" type="button" onClick={() => document.getElementById("manager")?.scrollIntoView({behavior: "smooth"})}>Open manager</button>
       </header>
       <main className="pool-main" id="pool-main">
         <section className="pool-overview" id="overview">
           <div className="pool-title"><div><h1>Protected pool</h1><p>Live reserve enforcement from verified cross-chain repayment facts.</p></div><div className="pool-status"><span>{snapshot.regime}</span><strong>{formatNumber(snapshot.reservePercent)}% <small>protected</small></strong><small>Updated on Creditcoin CC3</small></div></div>
-          <div className="managed-capacity"><span>100 prUSD managed</span><AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={snapshot.lendable} stressed /></div>
+          <div className="managed-capacity"><span>100 prUSD managed</span><AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={liveLendable} stressed /></div>
         </section>
 
         <div className="pool-workspace">
@@ -343,7 +327,7 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
             <section className="state-comparison" id="state-comparison">
               <h2>Pool state comparison</h2>
               <ComparisonRail label="NORMAL" block={comparison?.normal.blockNumber} reserve={comparison?.normal.reservePercent ?? 10} lendable={comparison?.normal.lendable ?? 90} outcome={comparison?.normal.outcome ?? (Number(amount) <= 90 ? "ALLOWED" : "BLOCKED")} amount={Number(amount) || 0} />
-              <ComparisonRail label={`CURRENT: ${snapshot.regime}`} block={comparison?.current.blockNumber} reserve={comparison?.current.reservePercent ?? snapshot.reservePercent} lendable={comparison?.current.lendable ?? snapshot.lendable} outcome={currentOutcome} amount={Number(amount) || 0} current />
+              <ComparisonRail label={`CURRENT: ${snapshot.regime}`} block={comparison?.current.blockNumber} reserve={comparison?.current.reservePercent ?? snapshot.reservePercent} lendable={comparison?.current.lendable ?? liveLendable} outcome={currentOutcome} amount={Number(amount) || 0} current />
             </section>
             <section className="evidence-path" id="evidence">
               <h2>Why the reserve changed</h2>
@@ -359,6 +343,7 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
           </div>
         </div>
 
+        <ManagerDesk onStateChange={(state) => {setManagerLendable(state.lendable); setComparison(null); setCapacityState("idle");}} />
         <section className="enforcement-record" id="activity"><h2>Recent enforcement record</h2><div><span className="record-icon">↑</span><strong>Reserve increased</strong><span>CC3 Testnet</span><span>Epoch {snapshot.epoch}</span><code>{shortHash(snapshot.reserveTransactionHash || snapshot.decisionHash)}</code>{transactionUrl ? <a href={transactionUrl} target="_blank" rel="noreferrer">View transaction <ExternalIcon /></a> : <a href="https://github.com/Alike001/proofreserve/blob/main/docs/ai-sensitive-evidence.md" target="_blank" rel="noreferrer">View evidence <ExternalIcon /></a>}</div></section>
       </main>
     </div>
@@ -414,6 +399,7 @@ function PoolNavIcon({kind}: {kind: string}) {
   if (kind === "decision") return <LockIcon />;
   if (kind === "integration") return <ExternalIcon />;
   if (kind === "activity") return <span className="nav-clock">◷</span>;
+  if (kind === "manager") return <LockIcon />;
   if (kind === "loan") return <span className="nav-doc">▤</span>;
   return <span className="nav-home">⌂</span>;
 }

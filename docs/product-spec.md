@@ -14,11 +14,12 @@ The clearest acceptance scenario is:
 
 1. a Creditcoin pool holds 100 test tokens and protects 10;
 2. a 70-token loan request fits within its 90-token normal capacity;
-3. several related borrowers produce genuine late/loss events on Sepolia;
+3. four small repayments settle while two much larger repayments become late across separate borrower groups on Sepolia;
 4. Attestcoin proofs turn those receipts into typed Creditcoin facts;
-5. Gemini detects correlated stress and recommends a policy-approved regime;
+5. count-only rules return `WATCH`, while Gemini recognizes that 500 late value overwhelms 40 settled value and recommends `STRESS`;
 6. the controller protects 40 tokens; and
-7. the same 70-token request now fails because only 60 remain lendable.
+7. the same 70-token request now fails because only 60 remain lendable; and
+8. an authorized manager can preflight, commit, and cancel an allowed loan-capacity reservation from the application.
 
 ## Required product loop
 
@@ -50,6 +51,7 @@ Sepolia lifecycle event
 - Four finite reserve regimes: `NORMAL`, `WATCH`, `STRESS`, and `CRISIS`.
 - Reserve controller plus test-asset pool where reserve changes constrain actual loans.
 - Manager console and public evidence-to-decision verification view.
+- Owner-gated browser workflow for loan commitment preflight, confirmation, receipt inspection, and cancellation.
 - Testnet deployment manifest, threat model, reproduction guide, deck/whitepaper, and demo video.
 
 ## Non-goals
@@ -64,4 +66,4 @@ Sepolia lifecycle event
 
 ## Definition of done
 
-An independent reviewer can start from one real Sepolia transaction, trace its Attestcoin proof into a typed Creditcoin fact, reproduce the AI feature and decision artifacts, inspect the controller's policy checks, and observe a real Creditcoin loan-capacity change. Restarting the worker must not accept the fact twice.
+An independent reviewer can start from one real Sepolia transaction, trace its Attestcoin proof into a typed Creditcoin fact, reproduce the AI feature and decision artifacts, inspect the controller's policy checks, and observe a real Creditcoin loan-capacity change. An authorized manager can reserve and restore capacity through the product without exposing a private key. Restarting the worker must not accept the fact twice.

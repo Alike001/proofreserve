@@ -13,6 +13,7 @@
     "app:dev": "vite --config app/vite.config.ts",
     "app:build": "tsc -p app/tsconfig.json && vite build --config app/vite.config.ts",
     "app:preview": "vite preview --config app/vite.config.ts",
+    "app:test": "tsx --test app/test/*.test.ts",
     "test:contracts": "forge test --force",
     "deploy:source": "node --env-file-if-exists=.env --import tsx deployment/src/source.ts",
     "deploy:creditcoin": "node --env-file-if-exists=.env --import tsx deployment/src/creditcoin.ts",
@@ -34,7 +35,7 @@
     "risk:test": "tsx --test risk/test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "preflight:testnet": "node --env-file-if-exists=.env --import tsx deployment/src/preflight.ts",
-    "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run typecheck && pnpm run worker:test && pnpm run risk:test && pnpm run app:build"
+    "check": "pnpm run build:contracts && pnpm run test:contracts && pnpm run typecheck && pnpm run worker:test && pnpm run risk:test && pnpm run app:test && pnpm run app:build"
   },
   "dependencies": {
     "@gluwa/asc-contracts": "0.2.1",

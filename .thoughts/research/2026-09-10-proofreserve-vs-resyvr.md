@@ -35,10 +35,11 @@ Both projects therefore make Attestcoin a core authorization dependency rather t
 
 Resyvr exposes a connected-wallet issuer journey covering reserve-vault deployment, issuer-system creation, CTC bond activation, reserve approval and deposit, Attestcoin proof generation, minting, and multi-issuer portfolio management. Its interface also provides transaction recovery, balance and allowance checks, gas estimates, and proof progress.
 
-ProofReserve now has two deliberately separate surfaces:
+ProofReserve now has three deliberately separate product surfaces:
 
 1. A landing page that explains the 10/90 to 40/60 liquidity-gate outcome in the first viewport.
 2. A live protected-pool application where a visitor can test 50, 70, and 95 prUSD requests against the deployed Creditcoin pool without a wallet or API key.
+3. A permissioned pool-manager desk that verifies the connected CC3 account against the deployed owner, runs a live contract preflight, commits capacity for an approved borrower, exposes the CC3 receipt, and cancels the commitment to restore capacity.
 
 The pool application now also exposes the decisive AI comparison: the disclosed count-based baseline reads four settled and two late facts and returns `WATCH` / 20%, while the reviewed Gemini artifact weighs 40 settled value against 500 late value and returns `STRESS` / 40% at 82% confidence. The screen then shows the Creditcoin-enforced 70 prUSD rejection. This comparison is displayed only when the active evidence root matches the published epoch-2 root.
 
@@ -50,7 +51,7 @@ Fresh browser checks produced these current contract outcomes:
 | 70 prUSD | Blocked |
 | 95 prUSD | Blocked |
 
-The ProofReserve check is a read-only contract simulation. It proves the financial boundary but does not let a public user deposit, withdraw, originate a loan, create a pool, or submit a new risk epoch from the browser.
+The public capacity check remains read-only. The manager desk adds a real write path for the authorized operator, while public users still cannot mutate pool state. ProofReserve does not yet expose lender deposits, borrower draws, pool creation, or new risk-epoch submission from the browser.
 
 ### Verification depth
 
@@ -69,7 +70,7 @@ Therefore Resyvr V1 is strongly reproduced, while the current V2 redemption evid
 
 Resyvr's own architecture says that V1 is deposit-only. Its V2 prototype adds identified payouts and proof-finalized redemption, but still assumes issuer liveness and does not claim a trustless two-way stablecoin. The CTC bond is an activation and accountability mechanism, not dollar insurance. The reserve asset issuer remains trusted, and the software is unaudited testnet code.
 
-ProofReserve demonstrates one configured pool, not a self-service pool network. Pool creation, public lender/borrower transaction flows, and automatic scenario creation are not exposed in the browser. Its epoch-2 evidence now proves that AI changed the result relative to a disclosed simpler rule, but the AI inference itself is reproduced from a committed reviewed artifact rather than re-called during the no-key audit. This is the correct trust boundary for reproducibility, but reviewers still need the repository artifact to inspect the model rationale and inputs.
+ProofReserve demonstrates one configured pool, not a self-service pool network. Its manager can reserve and release loan capacity, but pool creation, public lender deposits, borrower draws, and automatic scenario creation are not exposed in the browser. The signed browser transaction still needs a manual wallet-extension QA pass before deployment. Its epoch-2 evidence proves that AI changed the result relative to a disclosed simpler rule, but the AI inference itself is reproduced from a committed reviewed artifact rather than re-called during the no-key audit.
 
 ## Inferences
 
@@ -77,28 +78,28 @@ ProofReserve demonstrates one configured pool, not a self-service pool network. 
 
 If the projects were judged in their current states, Resyvr remains ahead in **product completeness**, **self-service workflow**, and **business expansion story**. Its application feels like something an issuer can operate, not only inspect.
 
-ProofReserve is now ahead in **originality of the financial decision**, **depth of Attestcoin use**, **clarity of the Attestcoin → AI → contract authority boundary**, and **direct DeFi consequence**. Its liquidity-gate landing page is at least as quickly understandable as Resyvr's hero, the AI-difference panel proves why the model changes the decision, and its blocked-loan interaction gives the visitor a real contract-derived result. Its weakness is still that the user's role is primarily reviewer rather than lender, borrower, or pool operator.
+ProofReserve is now ahead in **originality of the financial decision**, **depth of Attestcoin use**, **clarity of the Attestcoin → AI → contract authority boundary**, and **direct DeFi consequence**. Its liquidity-gate landing page is at least as quickly understandable as Resyvr's hero, the AI-difference panel proves why the model changes the decision, and the new pool-manager workflow gives an authorized operator a real financial action. Resyvr still covers a broader issuer lifecycle.
 
 | Area | ProofReserve | Resyvr | Current edge |
 | --- | --- | --- | --- |
 | 30-second explanation | Concrete lending safety brake | Concrete reserve-backed issuance | Tie |
-| Meaningful Attestcoin use | Seven verified facts drive reserve enforcement | Verified reserve deposit gates minting | Tie |
+| Meaningful Attestcoin use | Seven verified facts jointly drive reserve enforcement | One verified reserve deposit gates minting | ProofReserve |
 | Creditcoin-native consequence | Pool liquidity is contract-limited | Token minting and issuer bond live on CC3 | Tie |
 | Originality | Multi-fact portfolio risk and bounded AI | Strong but familiar proof-of-reserves issuance | ProofReserve |
-| Usable end-to-end workflow | Read-only capacity test and evidence inspection | Multi-step self-service issuer workflow | Resyvr |
+| Usable end-to-end workflow | Public capacity test plus permissioned commit/cancel manager flow | Broader multi-step self-service issuer workflow | Resyvr, narrower edge |
 | Reproducible verification | 64-check cross-chain-to-contract live audit | 79-check V1 verifier and stronger contract suite | Narrow Resyvr edge |
 | AI necessity | Baseline WATCH versus Gemini STRESS is publicly reproduced | Not an AI product | ProofReserve |
 | Expansion/business story | Future reusable pool-risk controller | Factory already supports multiple issuers | Resyvr |
 
 ### Track judgment
 
-ProofReserve should enter the **DeFi track**. The undeniably working product is a lending-pool liquidity control. AI is the differentiator inside the product, but the present canonical scenario is not strong enough to make AI itself the safest primary category.
+ProofReserve should enter the **DeFi track**. The working product is a lending-pool liquidity control, while AI is its differentiator. Epoch 2 now demonstrates why the AI layer changes the decision without giving it custody or final authority.
 
 ### Top-three judgment
 
 No honest analysis can guarantee a top-three placement or the grand prize. ProofReserve now has a credible top-three submission and a slight strategic edge for this hackathon's Attestcoin theme, while Resyvr remains the more complete operator product. ProofReserve should not restart: its core idea is differentiated, publicly deployed, and now proves both AI necessity and the full cross-chain enforcement trail.
 
-The highest-value next addition is now one genuine write-capable user loop—such as a clearly permissioned pool-manager commitment flow with preflight, transaction receipt, and safe cancellation. That would move ProofReserve from an excellent verifiable decision product into a more complete financial operating application. It should not add a generic token factory: that would weaken the story, duplicate Resyvr's territory, and make Attestcoin less central to ProofReserve's unique value.
+The highest-value next step is now a manual wallet-extension QA pass of the signed manager flow, followed by deployment and submission packaging. After that, a lender deposit path would expand the product more meaningfully than a generic token factory, which would duplicate Resyvr's territory and make Attestcoin less central to ProofReserve's unique value.
 
 ### Updated scorecard
 
@@ -106,7 +107,7 @@ These scores estimate current hackathon submission strength, not code quality in
 
 | Project | Score | Why |
 | --- | ---: | --- |
-| ProofReserve | 8.9 / 10 | Stronger theme fit, more original multi-fact Attestcoin use, demonstrated AI necessity, live financial consequence, and reproducible public audit; still missing a browser write workflow. |
+| ProofReserve | 9.1 / 10 | Stronger theme fit, multi-fact Attestcoin depth, demonstrated AI necessity, live financial consequence, public audit, and a permissioned manager workflow; signed wallet QA and deployment remain. |
 | Resyvr | 8.8 / 10 | More complete self-service product and broader contract testing; familiar proof-of-reserves pattern, and the checked V2 verifier currently fails its artifact-hash check. |
 
 ## Unknowns And Questions
