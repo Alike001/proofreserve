@@ -353,6 +353,7 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
                 <EvidenceStep icon={<RiskIcon />} title={`Gemini: ${snapshot.regime}`} meta={`${snapshot.confidencePercent}% confidence`} href="https://github.com/Alike001/proofreserve/blob/main/docs/build-slice-03.md" />
                 <EvidenceStep icon={<LockIcon />} title={`${snapshot.reservePercent}% enforced`} meta="ReserveController" href={transactionUrl || "https://github.com/Alike001/proofreserve/blob/main/docs/ai-sensitive-evidence.md"} />
               </div>
+              {snapshot.aiComparison && <WhyAiMattered snapshot={snapshot} />}
               <div className="authority-note" id="decision"><span><RiskIcon /><b>AI recommends</b><small>Gemini selects only a policy-approved risk regime.</small></span><span><LockIcon /><b>Smart contract has final authority</b><small>The ReserveController validates and enforces the result.</small></span></div>
             </section>
           </div>
@@ -360,6 +361,42 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
 
         <section className="enforcement-record" id="activity"><h2>Recent enforcement record</h2><div><span className="record-icon">↑</span><strong>Reserve increased</strong><span>CC3 Testnet</span><span>Epoch {snapshot.epoch}</span><code>{shortHash(snapshot.reserveTransactionHash || snapshot.decisionHash)}</code>{transactionUrl ? <a href={transactionUrl} target="_blank" rel="noreferrer">View transaction <ExternalIcon /></a> : <a href="https://github.com/Alike001/proofreserve/blob/main/docs/ai-sensitive-evidence.md" target="_blank" rel="noreferrer">View evidence <ExternalIcon /></a>}</div></section>
       </main>
+    </div>
+  );
+}
+
+function WhyAiMattered({snapshot}: {snapshot: DashboardSnapshot}) {
+  const comparison = snapshot.aiComparison;
+  if (!comparison) return null;
+
+  return (
+    <div className="ai-difference">
+      <header>
+        <div><span>Why AI mattered</span><strong>Counts looked manageable. Value told a different story.</strong></div>
+        <a href="https://github.com/Alike001/proofreserve/blob/main/docs/ai-sensitive-evidence.md" target="_blank" rel="noreferrer">Reproduce this decision <ExternalIcon /></a>
+      </header>
+      <div className="ai-difference__flow">
+        <article>
+          <small>Simple count rules</small>
+          <strong>{comparison.baselineRegime}</strong>
+          <p>{snapshot.settledCount} settled · {snapshot.lateCount} late</p>
+          <b>{comparison.baselineReservePercent}% reserve</b>
+        </article>
+        <i aria-hidden="true"><ArrowIcon /></i>
+        <article className="ai-difference__model">
+          <small>Gemini sees value severity</small>
+          <strong>{comparison.modelRegime}</strong>
+          <p>{formatNumber(comparison.settledValue)} settled value · {formatNumber(comparison.lateValue)} late value</p>
+          <b>{snapshot.reservePercent}% reserve · {snapshot.confidencePercent}% confidence</b>
+        </article>
+        <i aria-hidden="true"><ArrowIcon /></i>
+        <article className="ai-difference__contract">
+          <small>Creditcoin enforces</small>
+          <strong>{snapshot.blockedRequest} prUSD BLOCKED</strong>
+          <p>100 managed · {formatNumber(snapshot.reservePercent)} protected · {formatNumber(snapshot.lendable)} lendable</p>
+          <b>Contract has final authority</b>
+        </article>
+      </div>
     </div>
   );
 }

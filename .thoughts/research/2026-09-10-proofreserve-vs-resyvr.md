@@ -40,6 +40,8 @@ ProofReserve now has two deliberately separate surfaces:
 1. A landing page that explains the 10/90 to 40/60 liquidity-gate outcome in the first viewport.
 2. A live protected-pool application where a visitor can test 50, 70, and 95 prUSD requests against the deployed Creditcoin pool without a wallet or API key.
 
+The pool application now also exposes the decisive AI comparison: the disclosed count-based baseline reads four settled and two late facts and returns `WATCH` / 20%, while the reviewed Gemini artifact weighs 40 settled value against 500 late value and returns `STRESS` / 40% at 82% confidence. The screen then shows the Creditcoin-enforced 70 prUSD rejection. This comparison is displayed only when the active evidence root matches the published epoch-2 root.
+
 Fresh browser checks produced these current contract outcomes:
 
 | Request | Current CC3 outcome |
@@ -52,7 +54,7 @@ The ProofReserve check is a read-only contract simulation. It proves the financi
 
 ### Verification depth
 
-ProofReserve's fresh full check passes 25 Solidity tests, 16 risk-engine tests, one worker persistence/idempotence test, strict TypeScript checking, and a production application build. The live capacity command reads CC3 and confirms the 100 managed / 40 protected / 60 lendable state and the 70 prUSD rejection.
+ProofReserve's fresh full check passes 25 Solidity tests, 16 risk-engine tests, one worker persistence/idempotence test, strict TypeScript checking, and a production application build. Its new no-key `pnpm verify:live` audit passes 64 public checks spanning seven Sepolia source receipts, seven Attestcoin acceptance receipts and processed query IDs, the epoch-2 root and totals, deterministic baseline, Gemini artifact hashes, enforcement receipt, current pool state, and historical/current loan simulations. It confirms 100 managed / 40 protected / 60 lendable and the 70 prUSD contract rejection.
 
 Resyvr's fresh local contract run passes 55 Foundry tests, including fuzz and stateful invariant campaigns. Its V1 preflight and 79-check live evidence verifier pass. Dashboard structure, ABI encoding, TypeScript, unit, and submission-package checks also pass.
 
@@ -67,15 +69,15 @@ Therefore Resyvr V1 is strongly reproduced, while the current V2 redemption evid
 
 Resyvr's own architecture says that V1 is deposit-only. Its V2 prototype adds identified payouts and proof-finalized redemption, but still assumes issuer liveness and does not claim a trustless two-way stablecoin. The CTC bond is an activation and accountability mechanism, not dollar insurance. The reserve asset issuer remains trusted, and the software is unaudited testnet code.
 
-ProofReserve demonstrates one configured pool, not a self-service pool network. Pool creation, public lender/borrower transaction flows, and automatic scenario creation are not exposed in the browser. The canonical deterministic baseline already classified the deployed scenario as `STRESS`, and Gemini also returned `STRESS`; the live evidence therefore proves bounded AI participation, but not that AI changed a decision a disclosed simpler rule would have missed.
+ProofReserve demonstrates one configured pool, not a self-service pool network. Pool creation, public lender/borrower transaction flows, and automatic scenario creation are not exposed in the browser. Its epoch-2 evidence now proves that AI changed the result relative to a disclosed simpler rule, but the AI inference itself is reproduced from a committed reviewed artifact rather than re-called during the no-key audit. This is the correct trust boundary for reproducibility, but reviewers still need the repository artifact to inspect the model rationale and inputs.
 
 ## Inferences
 
 ### Current competitive judgment
 
-If the projects were judged in their current states, Resyvr is ahead in **product completeness**, **self-service workflow**, **test/evidence breadth**, and **business expansion story**. Its application feels like something an issuer can operate, not only inspect.
+If the projects were judged in their current states, Resyvr remains ahead in **product completeness**, **self-service workflow**, and **business expansion story**. Its application feels like something an issuer can operate, not only inspect.
 
-ProofReserve is ahead in **originality of the financial decision**, **clarity of the Attestcoin → AI → contract authority boundary**, and **direct DeFi consequence**. Its new liquidity-gate landing page is at least as quickly understandable as Resyvr's hero, and its blocked-loan interaction gives the visitor a real contract-derived result. Its weakness is that the user's role is still primarily reviewer rather than lender, borrower, or pool operator.
+ProofReserve is now ahead in **originality of the financial decision**, **depth of Attestcoin use**, **clarity of the Attestcoin → AI → contract authority boundary**, and **direct DeFi consequence**. Its liquidity-gate landing page is at least as quickly understandable as Resyvr's hero, the AI-difference panel proves why the model changes the decision, and its blocked-loan interaction gives the visitor a real contract-derived result. Its weakness is still that the user's role is primarily reviewer rather than lender, borrower, or pool operator.
 
 | Area | ProofReserve | Resyvr | Current edge |
 | --- | --- | --- | --- |
@@ -84,8 +86,8 @@ ProofReserve is ahead in **originality of the financial decision**, **clarity of
 | Creditcoin-native consequence | Pool liquidity is contract-limited | Token minting and issuer bond live on CC3 | Tie |
 | Originality | Multi-fact portfolio risk and bounded AI | Strong but familiar proof-of-reserves issuance | ProofReserve |
 | Usable end-to-end workflow | Read-only capacity test and evidence inspection | Multi-step self-service issuer workflow | Resyvr |
-| Reproducible verification | Healthy tests and live capacity check | Broader V1 verifier and stronger contract suite | Resyvr |
-| AI necessity | Not yet demonstrated by canonical scenario | Not an AI product | Resyvr avoids this question |
+| Reproducible verification | 64-check cross-chain-to-contract live audit | 79-check V1 verifier and stronger contract suite | Narrow Resyvr edge |
+| AI necessity | Baseline WATCH versus Gemini STRESS is publicly reproduced | Not an AI product | ProofReserve |
 | Expansion/business story | Future reusable pool-risk controller | Factory already supports multiple issuers | Resyvr |
 
 ### Track judgment
@@ -94,13 +96,18 @@ ProofReserve should enter the **DeFi track**. The undeniably working product is 
 
 ### Top-three judgment
 
-No honest analysis can guarantee a top-three placement or the grand prize. ProofReserve has a credible top-three mechanism, but Resyvr is presently more submission-ready as a complete product. ProofReserve should not restart: its core idea is differentiated and already publicly deployed. The correct move is to close the product and AI-proof gaps.
+No honest analysis can guarantee a top-three placement or the grand prize. ProofReserve now has a credible top-three submission and a slight strategic edge for this hackathon's Attestcoin theme, while Resyvr remains the more complete operator product. ProofReserve should not restart: its core idea is differentiated, publicly deployed, and now proves both AI necessity and the full cross-chain enforcement trail.
 
-The highest-value next addition is a second public evidence epoch in which the transparent deterministic baseline returns `WATCH`, while Gemini identifies a relationship among individually modest facts and recommends the contract-approved `STRESS` band. That would prove why multiple verified facts and AI reasoning are both necessary. The contract must continue to validate the final band and retain all fund authority.
+The highest-value next addition is now one genuine write-capable user loop—such as a clearly permissioned pool-manager commitment flow with preflight, transaction receipt, and safe cancellation. That would move ProofReserve from an excellent verifiable decision product into a more complete financial operating application. It should not add a generic token factory: that would weaken the story, duplicate Resyvr's territory, and make Attestcoin less central to ProofReserve's unique value.
 
-The second-highest-value addition is a no-key `verify:live` command that checks the complete public trail from Sepolia receipts through Attestcoin acceptances, checkpoint root, saved Gemini artifact, enforcement transaction, and historical/current capacity outcomes.
+### Updated scorecard
 
-After those, one genuine write-capable user loop—such as a clearly permissioned pool-manager action or a safe test-asset lender flow—would move ProofReserve from an excellent interactive proof into a more complete financial application. It should not add a generic token factory: that would weaken the story, duplicate Resyvr's territory, and make Attestcoin less central to ProofReserve's unique value.
+These scores estimate current hackathon submission strength, not code quality in isolation and not guaranteed judging results.
+
+| Project | Score | Why |
+| --- | ---: | --- |
+| ProofReserve | 8.9 / 10 | Stronger theme fit, more original multi-fact Attestcoin use, demonstrated AI necessity, live financial consequence, and reproducible public audit; still missing a browser write workflow. |
+| Resyvr | 8.8 / 10 | More complete self-service product and broader contract testing; familiar proof-of-reserves pattern, and the checked V2 verifier currently fails its artifact-hash check. |
 
 ## Unknowns And Questions
 

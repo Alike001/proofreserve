@@ -24,6 +24,8 @@ A count-based view sees four successes and two late payments and returns `WATCH`
 
 The temporary utilization commitment was created in [CC3 transaction `0xe293…d8ec`](https://creditcoin-testnet.blockscout.com/tx/0xe293b51786b46ca04fee98a0f40e58d5e25a306824a99fec8ef3fa8667eed8ec) and cancelled in [`0x06dd…be9c`](https://creditcoin-testnet.blockscout.com/tx/0x06dd8880ffb3809a2a63cb9c45d2b3831c51242fcb65b16654307d405e82be9c). The assessment remains bound to block `5463254`, while the public pool has been restored to zero commitments and 60 prUSD lendable.
 
+Run `pnpm verify:live` from the repository root to audit this complete path using public RPC reads. It does not need a wallet, signer secret, or Gemini API key.
+
 ## Attestcoin proof trail
 
 | Fact | Sepolia transaction | Creditcoin acceptance |
@@ -39,6 +41,7 @@ The temporary utilization commitment was created in [CC3 transaction `0xe293…d
 ## Saved artifacts
 
 - Scenario inputs: [`deployments/scenario-epoch-2-ai.json`](../deployments/scenario-epoch-2-ai.json)
+- Attestcoin source/acceptance pairs: [`deployments/attestcoin-proofs-epoch-2.json`](../deployments/attestcoin-proofs-epoch-2.json)
 - Pinned reviewed assessment: [`deployments/risk-assessment-epoch-2.json`](../deployments/risk-assessment-epoch-2.json)
 - Creditcoin submission receipt: [`deployments/risk-submission-epoch-2.json`](../deployments/risk-submission-epoch-2.json)
 - Temporary utilization and cleanup: [`deployments/ai-utilization.json`](../deployments/ai-utilization.json)

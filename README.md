@@ -53,6 +53,14 @@ Create the production bundle with:
 
     pnpm app:build
 
+## Verify the live product
+
+Anyone can audit the full public path without a wallet, private key, or Gemini API key:
+
+    pnpm verify:live
+
+The command reads public Sepolia and Creditcoin CC3 RPCs and checks all seven epoch-2 source/acceptance transaction pairs, the processed Attestcoin query IDs, checkpoint root and payment totals, the deterministic `WATCH` baseline, the saved Gemini `STRESS` assessment and hashes, the Creditcoin enforcement receipt, the current 100/40/60 pool state, and the contract-level 70 prUSD rejection. `SOURCE_CHAIN_RPC_URL` and `CREDITCOIN_RPC_URL` may be supplied to override the built-in public endpoints.
+
 ## Trust boundary
 
 - Attestcoin proves source-chain transaction inclusion and continuity.
@@ -85,6 +93,7 @@ Create a new auth key in [Google AI Studio](https://aistudio.google.com/app/apik
 - [Evidence-to-reserve agent slice](./docs/build-slice-04.md)
 - [Testnet deployment guide](./docs/deployment.md)
 - [Public testnet evidence](./docs/testnet-evidence.md)
+- [AI-sensitive decision evidence](./docs/ai-sensitive-evidence.md)
 - [DoraHacks submission draft](./docs/submission/dorahacks-submission.md)
 - [Pitch deck](./docs/pitch-deck.pdf)
 - [Third-party notices](./THIRD_PARTY_NOTICES.md)

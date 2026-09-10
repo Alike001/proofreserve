@@ -22,6 +22,7 @@
     "utilization:stage": "node --env-file-if-exists=.env --import tsx operations/src/utilization.ts stage",
     "utilization:clear": "node --env-file-if-exists=.env --import tsx operations/src/utilization.ts clear",
     "capacity:check": "node --env-file-if-exists=.env --import tsx operations/src/capacity.ts",
+    "verify:live": "node --env-file-if-exists=.env --import tsx operations/src/verify-live.ts",
     "worker:enqueue": "node --env-file-if-exists=.env --import tsx worker/src/cli.ts enqueue",
     "worker:run": "node --env-file-if-exists=.env --import tsx worker/src/cli.ts run",
     "proofs:export": "node --env-file-if-exists=.env --import tsx operations/src/export-proofs.ts",

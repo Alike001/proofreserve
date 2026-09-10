@@ -4,7 +4,9 @@ const EVIDENCE_ABI = [
   "function currentEpoch() view returns (uint64)",
   "function checkpointRoots(uint64 epoch) view returns (bytes32)",
   "function settledCount(uint64 epoch) view returns (uint64)",
+  "function settledValue(uint64 epoch) view returns (uint256)",
   "function lateCount(uint64 epoch) view returns (uint64)",
+  "function lateValue(uint64 epoch) view returns (uint256)",
   "function lossCount(uint64 epoch) view returns (uint64)"
 ];
 const CONTROLLER_ABI = [
@@ -24,6 +26,7 @@ const POOL_ABI = [
 
 const CANONICAL_NORMAL_BLOCK = 5_460_299;
 const CAPACITY_TEST_BORROWER = "0x000000000000000000000000000000000000B001";
+const AI_SENSITIVE_EVIDENCE_ROOT = "0xe5efddc65815b4fd172ecbd616b15f40ead7dc93e61c21b33c13d14a5db41948";
 
 export type DataMode = "preview" | "live";
 
@@ -56,7 +59,16 @@ export interface DashboardSnapshot {
   evidenceRoot: string;
   decisionHash: string;
   reserveTransactionHash: string;
+  aiComparison: AiDecisionComparison | null;
   records: AuditRecord[];
+}
+
+export interface AiDecisionComparison {
+  baselineRegime: "WATCH";
+  baselineReservePercent: 20;
+  settledValue: number;
+  lateValue: number;
+  modelRegime: "STRESS";
 }
 
 export interface CapacityState {
@@ -91,6 +103,13 @@ export const previewSnapshot: DashboardSnapshot = {
   evidenceRoot: "0xe5efddc65815b4fd172ecbd616b15f40ead7dc93e61c21b33c13d14a5db41948",
   decisionHash: "0x52217ce7527782799270050baf978ba31588bd2252b04eb4e1b505d2731ee411",
   reserveTransactionHash: "0xfc25a12816d9967db8c414832c0f0771e4fd7ae013d055bc586ef39c7fc8c83e",
+  aiComparison: {
+    baselineRegime: "WATCH",
+    baselineReservePercent: 20,
+    settledValue: 40,
+    lateValue: 500,
+    modelRegime: "STRESS"
+  },
   records: buildRecords(
     "0xe5efddc65815b4fd172ecbd616b15f40ead7dc93e61c21b33c13d14a5db41948",
     "0x52217ce7527782799270050baf978ba31588bd2252b04eb4e1b505d2731ee411",
@@ -139,10 +158,12 @@ export async function loadDashboardSnapshot(): Promise<DashboardSnapshot> {
   const evidenceCurrentEpoch = Number(await evidence.getFunction("currentEpoch").staticCall());
   const epoch = activeEpoch > 0 ? activeEpoch : Math.max(1, evidenceCurrentEpoch - 1);
 
-  const [settled, late, loss, evidenceRoot, regimeIndex, reserveBps, managedAssets, lendable] =
+  const [settled, settledValue, late, lateValue, loss, evidenceRoot, regimeIndex, reserveBps, managedAssets, lendable] =
     await Promise.all([
       evidence.getFunction("settledCount").staticCall(epoch),
+      evidence.getFunction("settledValue").staticCall(epoch),
       evidence.getFunction("lateCount").staticCall(epoch),
+      evidence.getFunction("lateValue").staticCall(epoch),
       evidence.getFunction("lossCount").staticCall(epoch),
       evidence.getFunction("checkpointRoots").staticCall(epoch),
       controller.getFunction("activeRegime").staticCall(),
@@ -165,6 +186,16 @@ export async function loadDashboardSnapshot(): Promise<DashboardSnapshot> {
   const managed = Number(formatUnits(managedAssets, 18));
   const currentLendable = Number(formatUnits(lendable, 18));
   const confidencePercent = Number(import.meta.env.VITE_LAST_CONFIDENCE_BPS || 8200) / 100;
+  const root = String(evidenceRoot);
+  const aiComparison: AiDecisionComparison | null = root.toLowerCase() === AI_SENSITIVE_EVIDENCE_ROOT
+    ? {
+        baselineRegime: "WATCH",
+        baselineReservePercent: 20,
+        settledValue: Number(formatUnits(settledValue, 18)),
+        lateValue: Number(formatUnits(lateValue, 18)),
+        modelRegime: "STRESS"
+      }
+    : null;
 
   return {
     mode: "live",
@@ -181,9 +212,10 @@ export async function loadDashboardSnapshot(): Promise<DashboardSnapshot> {
     regime,
     confidencePercent,
     reason: regime === "STRESS" ? "Late-payment value dominates the verified repayment history." : "Policy checks reflect the latest verified evidence.",
-    evidenceRoot: String(evidenceRoot),
+    evidenceRoot: root,
     decisionHash,
     reserveTransactionHash,
+    aiComparison,
     records: buildRecords(
       String(evidenceRoot),
       decisionHash,
