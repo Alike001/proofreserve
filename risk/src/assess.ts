@@ -30,7 +30,10 @@ export async function assessPortfolio(
 
   try {
     candidate = await client.assess(features);
-  } catch {
+  } catch (error) {
+    if (process.env.RISK_MODEL_DEBUG?.trim().toLowerCase() === "true") {
+      console.error("Gemini assessment rejected; using deterministic fallback:", error);
+    }
     candidate = undefined;
   }
 

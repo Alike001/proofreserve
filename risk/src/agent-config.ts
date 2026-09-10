@@ -26,7 +26,7 @@ export function loadRiskAgentConfig(requireSigner: boolean): RiskAgentConfig {
     evidenceDeploymentBlock: nonNegativeInteger("EVIDENCE_DEPLOYMENT_BLOCK"),
     confirmations: positiveInteger("CREDITCOIN_CONFIRMATIONS", 1),
     geminiApiKey: required("GEMINI_API_KEY"),
-    geminiModel: process.env.GEMINI_MODEL?.trim() || "gemini-3.7-flash",
+    geminiModel: process.env.GEMINI_MODEL?.trim() || "gemini-3.8-flash",
     agentPrivateKey
   };
 }

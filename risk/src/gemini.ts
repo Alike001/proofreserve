@@ -40,7 +40,7 @@ interface GeminiInteractionResponse {
 export class GeminiClient {
   constructor(
     private readonly apiKey: string | undefined,
-    private readonly model = "gemini-3.7-flash",
+    private readonly model = "gemini-3.8-flash",
     private readonly fetchFn: typeof fetch = fetch,
     private readonly endpoint = "https://generativelanguage.googleapis.com/v1beta/interactions"
   ) {}
@@ -52,7 +52,7 @@ export class GeminiClient {
       model: this.model,
       store: false,
       system_instruction:
-        "You are a conservative portfolio risk classifier. Use only the supplied typed facts. Identify interactions among repayment behavior, correlated group deterioration, loss, concentration, and utilization. Monetary values are integer base units; never infer an asset symbol or decimals. Return only schema-valid JSON.",
+        "You are a conservative portfolio risk classifier. Use only the supplied typed facts. Identify interactions among repayment behavior, payment-value severity, borrower-group concentration, realized loss, and utilization. CORRELATED_LATENESS is valid only when maxDeterioratingBorrowersInOneGroup is at least 2; otherwise use PAYMENT_VOLATILITY for late payments. Monetary values are integer base units; compare ratios only and never infer an asset symbol or decimals. Return only schema-valid JSON.",
       input: JSON.stringify(features),
       response_format: {
         type: "text",

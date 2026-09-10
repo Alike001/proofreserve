@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "chainId": 102031,
+  "pool": "0x8305921B241cAEC35750d9532B22210802e9714D",
+  "borrower": "0x000000000000000000000000000000000000B001",
+  "state": "CLEARED",
+  "managedAssetsBaseUnits": "100000000000000000000",
+  "totalCommitmentsBaseUnits": "0",
+  "borrowerCommitmentBaseUnits": "0",
+  "lendableBaseUnits": "60000000000000000000",
+  "transactions": [
+    {
+      "action": "stage temporary AI utilization",
+      "transactionHash": "0xe293b51786b46ca04fee98a0f40e58d5e25a306824a99fec8ef3fa8667eed8ec",
+      "blockNumber": 5463254
+    },
+    {
+      "action": "clear temporary AI utilization",
+      "transactionHash": "0x06dd8880ffb3809a2a63cb9c45d2b3831c51242fcb65b16654307d405e82be9c",
+      "blockNumber": 5463256
+    }
+  ]
+}

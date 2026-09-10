@@ -14,12 +14,17 @@ const epoch = rawEpoch === undefined ? undefined : Number(rawEpoch);
 if (epoch !== undefined && (!Number.isSafeInteger(epoch) || epoch <= 0)) {
   throw new Error("epoch must be a positive integer");
 }
+const rawObservedBlock = process.env.RISK_OBSERVED_BLOCK?.trim();
+const observedBlock = rawObservedBlock === undefined ? undefined : Number(rawObservedBlock);
+if (observedBlock !== undefined && (!Number.isSafeInteger(observedBlock) || observedBlock <= 0)) {
+  throw new Error("RISK_OBSERVED_BLOCK must be a positive integer");
+}
 
 const agent = new OnchainRiskAgent(loadRiskAgentConfig(command === "submit"));
 const artifactPath = process.env.RISK_ASSESSMENT_ARTIFACT?.trim() || "deployments/risk-assessment.json";
 
 if (command === "preview") {
-  const prepared = await agent.prepare(epoch);
+  const prepared = await agent.prepare(epoch, observedBlock);
   await writeManifest(artifactPath, prepared);
   console.log(JSON.stringify({...prepared, artifactPath}, null, 2));
 } else {

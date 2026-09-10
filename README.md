@@ -2,7 +2,7 @@
 
 > Protected lending pools powered by verified cross-chain risk.
 
-**[Open the live product](https://proofreserve.vercel.app)** · **[Inspect the canonical reserve transaction](https://creditcoin-testnet.blockscout.com/tx/0x300b1ad4e7f51da215b0630f370a73bef030c0e8c1e26ed80192e2cd8da77126)**
+**[Open the live product](https://proofreserve.vercel.app)** · **[Inspect the AI-sensitive reserve transaction](https://creditcoin-testnet.blockscout.com/tx/0xfc25a12816d9967db8c414832c0f0771e4fd7ae013d055bc586ef39c7fc8c83e)**
 
 ProofReserve is a Creditcoin DeFi application for operating lending pools that protect liquidity before borrower problems spread. It turns Attestcoin-verified borrower events from other chains into an AI-recommended safety reserve that Creditcoin contracts enforce.
 
@@ -10,7 +10,7 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 
 ## Status
 
-The complete MVP is live on Ethereum Sepolia and Creditcoin CC3 Testnet. Seven source transactions have been proven through Attestcoin and accepted on Creditcoin, a reviewed Gemini `STRESS` assessment has been enforced, and the pool now rejects the same 70 prUSD request it allowed before the reserve change. See the [public testnet evidence](docs/testnet-evidence.md) for contracts and transaction links.
+The complete MVP is live on Ethereum Sepolia and Creditcoin CC3 Testnet. Fourteen source transactions across two evidence epochs have been proven through Attestcoin and accepted on Creditcoin. The first epoch proves the 10% to 40% reserve consequence. The second proves AI necessity: deterministic rules return `WATCH`, while Gemini compares the value severity across the verified facts and recommends `STRESS` with 82% confidence. The Creditcoin controller accepted that exact block-pinned result. See the [initial testnet evidence](docs/testnet-evidence.md) and [AI-sensitive evidence](docs/ai-sensitive-evidence.md) for the complete public trails.
 
 The live product includes a no-wallet capacity test. Enter a proposed loan and the browser performs two read-only simulations of the deployed pool's `commitLoan` function: at the last normal-reserve block and at the latest block. Try 50 prUSD (allowed in both states), 70 prUSD (allowed before and blocked now), and 95 prUSD (blocked in both states).
 
@@ -72,7 +72,7 @@ pnpm preflight:testnet
 
 Current local verification: 25 Solidity tests, one worker restart/idempotence test, and sixteen risk-engine tests pass; all TypeScript passes strict type-checking.
 
-Live AI inference uses the Gemini Developer API and requires a server-side `GEMINI_API_KEY`. The selected model is available on Google's free tier, so a paid AI account is not required for the hackathon within current quotas. If the key, network, or quota is unavailable, the risk engine fails safely to its deterministic baseline; a live Gemini call is still required to demonstrate the AI integration.
+Live AI inference uses `gemini-3.8-flash` through the Gemini Developer API and requires a server-side `GEMINI_API_KEY`. The selected model is available on Google's free tier, so a paid AI account is not required within current quotas. HTTP 429 or temporary model failures cause the risk engine to fail safely to its deterministic baseline; a live Gemini result is still required for the judged AI-sensitive path.
 
 Create a new auth key in [Google AI Studio](https://aistudio.google.com/app/apikey), copy `.env.example` to the ignored `.env` file, and place the key there locally. Load that environment only into the server-side worker before running `pnpm risk:assess risk/fixtures/stress-features.json`. Never put the key in frontend code or paste it into chat.
 

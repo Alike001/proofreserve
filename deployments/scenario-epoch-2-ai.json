@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "scenario": "AI_SENSITIVE_VOLUME_STRESS",
+  "sourceChainId": 11155111,
+  "sourceLoanBook": "0xD5CC39ab46B923Cc4F40CB919BE971c0529b0A4b",
+  "epoch": 2,
+  "factsRoot": "0xe5efddc65815b4fd172ecbd616b15f40ead7dc93e61c21b33c13d14a5db41948",
+  "factCount": 6,
+  "settledFactCount": 4,
+  "lateFactCount": 2,
+  "settledAmountPerFactBaseUnits": "10000000000000000000",
+  "lateAmountPerFactBaseUnits": "250000000000000000000",
+  "designIntent": "Count-only baseline WATCH; Gemini may raise to STRESS from late-value severity across separate groups.",
+  "transactions": [
+    {
+      "action": "open settled-1",
+      "transactionHash": "0xf1d135f7f96cd2c2c0a0051059fd96c83e5a478972eb0ddcbf7674873c8645d5",
+      "blockNumber": 11674551
+    },
+    {
+      "action": "report settled-1",
+      "transactionHash": "0xb40c772fa0196aa02eb830ee8401ccf16f33a24d3602aa57f5d821bbfc503027",
+      "blockNumber": 11674552
+    },
+    {
+      "action": "open settled-2",
+      "transactionHash": "0xaf823885ec569b8eb2667e8594b157ec81cbbf97548d9dd9bd7aff7f9b7a200f",
+      "blockNumber": 11674554
+    },
+    {
+      "action": "report settled-2",
+      "transactionHash": "0xa01695a929888af7788aef02bd5e44bad4847caf099bb4f6010657ccb52f5676",
+      "blockNumber": 11674555
+    },
+    {
+      "action": "open settled-3",
+      "transactionHash": "0x1d4a15d9747092934db8682b25211db70a58fd19dbae8c5a1dc4b62d0e094137",
+      "blockNumber": 11674557
+    },
+    {
+      "action": "report settled-3",
+      "transactionHash": "0x1784c6d7f0d8aee805b3b04a67d71f30a7fa5a970db3a46035c25803b08b5979",
+      "blockNumber": 11674558
+    },
+    {
+      "action": "open settled-4",
+      "transactionHash": "0x80c27e0cc1eb5721930ebe86fdfd7d577e98019bb0831bd973e29784569c1168",
+      "blockNumber": 11674559
+    },
+    {
+      "action": "report settled-4",
+      "transactionHash": "0xef69df097cff94fa6ac5556766665e0a3cfd7048444694ad45081683d4b311db",
+      "blockNumber": 11674561
+    },
+    {
+      "action": "open late-large-1",
+      "transactionHash": "0x0390b8b8676d299bd8faf99fd00eb2537bb2a4815321168a1efab8b8e423da22",
+      "blockNumber": 11674562
+    },
+    {
+      "action": "report late-large-1",
+      "transactionHash": "0xf722c36ba0d3e08cfb663d36f31bc84d585d41b4b6808dada2f01c8d404a5740",
+      "blockNumber": 11674564
+    },
+    {
+      "action": "open late-large-2",
+      "transactionHash": "0xb9d4537647f79125fb4842387427653fafe54ef3c30d82a10c71398ad6944d07",
+      "blockNumber": 11674565
+    },
+    {
+      "action": "report late-large-2",
+      "transactionHash": "0xae5fbeece0ba514969128ad09c75231156f9430278689eb87558b10198325d9f",
+      "blockNumber": 11674566
+    },
+    {
+      "action": "close epoch 2 checkpoint",
+      "transactionHash": "0x144459103732bf1039211051259180bfcfc9c23099c4fd7d74f8a1d4ab3037e9",
+      "blockNumber": 11674568
+    }
+  ],
+  "attestcoinSourceTransactionHashes": [
+    "0xb40c772fa0196aa02eb830ee8401ccf16f33a24d3602aa57f5d821bbfc503027",
+    "0xa01695a929888af7788aef02bd5e44bad4847caf099bb4f6010657ccb52f5676",
+    "0x1784c6d7f0d8aee805b3b04a67d71f30a7fa5a970db3a46035c25803b08b5979",
+    "0xef69df097cff94fa6ac5556766665e0a3cfd7048444694ad45081683d4b311db",
+    "0xf722c36ba0d3e08cfb663d36f31bc84d585d41b4b6808dada2f01c8d404a5740",
+    "0xae5fbeece0ba514969128ad09c75231156f9430278689eb87558b10198325d9f",
+    "0x144459103732bf1039211051259180bfcfc9c23099c4fd7d74f8a1d4ab3037e9"
+  ]
+}

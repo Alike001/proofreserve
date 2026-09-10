@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {assessPortfolio, validateRiskAssessment} from "../src/assess.js";
 import {ModelCandidate, PortfolioFeatures} from "../src/domain.js";
+import {deterministicBaseline} from "../src/policy.js";
 
 const ROOT = `0x${"22".repeat(32)}`;
 
@@ -49,20 +50,22 @@ test("healthy facts remain normal when model agrees", async () => {
 test("AI can raise a watch baseline when interacting signals justify stress", async () => {
   const input = features({
     settledCount: 4,
+    settledValue: "40000000000000000000",
     lateCount: 2,
-    lateValue: "200000000000000000000",
+    lateValue: "500000000000000000000",
     deterioratingBorrowers: 2,
     maxDeterioratingBorrowersInOneGroup: 1,
-    groupConcentrationBps: 7_500,
-    utilizationBps: 7_900
+    groupConcentrationBps: 5_000,
+    utilizationBps: 6_000
   });
+  assert.equal(deterministicBaseline(input).regime, "WATCH");
   const result = await assessPortfolio(
     input,
     model({
       regime: "STRESS",
       confidenceBps: 8_200,
       reasonCodes: ["PAYMENT_VOLATILITY", "GROUP_CONCENTRATION"],
-      rationale: "Lateness and concentration interact near high utilization."
+      rationale: "Large late-payment value outweighs the small settled-payment history."
     })
   );
   assert.equal(result.regime, "STRESS");

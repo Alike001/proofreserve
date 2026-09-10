@@ -57,8 +57,12 @@ export class OnchainRiskAgent {
     this.pool = new Contract(config.poolAddress, POOL_ABI, this.provider);
   }
 
-  async prepare(requestedEpoch?: number): Promise<PreparedOnchainAssessment> {
-    const observedBlock = await this.provider.getBlockNumber();
+  async prepare(requestedEpoch?: number, requestedObservedBlock?: number): Promise<PreparedOnchainAssessment> {
+    const latestBlock = await this.provider.getBlockNumber();
+    const observedBlock = requestedObservedBlock ?? latestBlock;
+    if (!Number.isSafeInteger(observedBlock) || observedBlock <= 0 || observedBlock > latestBlock) {
+      throw new Error(`observed block must be between 1 and the latest Creditcoin block ${latestBlock}`);
+    }
     const epoch = requestedEpoch ?? await this.latestClosedEpoch(observedBlock);
     if (!Number.isSafeInteger(epoch) || epoch <= 0) throw new Error("assessment epoch must be a positive integer");
 

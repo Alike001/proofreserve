@@ -75,7 +75,7 @@ export interface CapacityComparison {
 
 export const previewSnapshot: DashboardSnapshot = {
   mode: "preview",
-  epoch: 1,
+  epoch: 2,
   factCount: 6,
   settledCount: 4,
   lateCount: 2,
@@ -86,16 +86,16 @@ export const previewSnapshot: DashboardSnapshot = {
   lendable: 60,
   blockedRequest: 70,
   regime: "STRESS",
-  confidencePercent: 85,
-  reason: "Correlated lateness detected across one borrower group.",
-  evidenceRoot: "0xb2fd86784e6e309e4484909b67526a11657e841cdcff8fb38255dfb9c2519750",
-  decisionHash: "0x9f27d08b643c592b61c89f2fea4c72ffbf740194a5561778b626de2ea79c14b6",
-  reserveTransactionHash: "",
+  confidencePercent: 82,
+  reason: "Late-payment value dominates the verified repayment history.",
+  evidenceRoot: "0xe5efddc65815b4fd172ecbd616b15f40ead7dc93e61c21b33c13d14a5db41948",
+  decisionHash: "0x52217ce7527782799270050baf978ba31588bd2252b04eb4e1b505d2731ee411",
+  reserveTransactionHash: "0xfc25a12816d9967db8c414832c0f0771e4fd7ae013d055bc586ef39c7fc8c83e",
   records: buildRecords(
-    "0xb2fd86784e6e309e4484909b67526a11657e841cdcff8fb38255dfb9c2519750",
-    "0x9f27d08b643c592b61c89f2fea4c72ffbf740194a5561778b626de2ea79c14b6",
-    "",
-    1,
+    "0xe5efddc65815b4fd172ecbd616b15f40ead7dc93e61c21b33c13d14a5db41948",
+    "0x52217ce7527782799270050baf978ba31588bd2252b04eb4e1b505d2731ee411",
+    "0xfc25a12816d9967db8c414832c0f0771e4fd7ae013d055bc586ef39c7fc8c83e",
+    2,
     6,
     4,
     2,
@@ -164,7 +164,7 @@ export async function loadDashboardSnapshot(): Promise<DashboardSnapshot> {
   const factCount = Number(settled) + Number(late) + Number(loss);
   const managed = Number(formatUnits(managedAssets, 18));
   const currentLendable = Number(formatUnits(lendable, 18));
-  const confidencePercent = Number(import.meta.env.VITE_LAST_CONFIDENCE_BPS || 8500) / 100;
+  const confidencePercent = Number(import.meta.env.VITE_LAST_CONFIDENCE_BPS || 8200) / 100;
 
   return {
     mode: "live",
@@ -180,7 +180,7 @@ export async function loadDashboardSnapshot(): Promise<DashboardSnapshot> {
     blockedRequest: 70,
     regime,
     confidencePercent,
-    reason: regime === "STRESS" ? "Correlated lateness detected across one borrower group." : "Policy checks reflect the latest verified evidence.",
+    reason: regime === "STRESS" ? "Late-payment value dominates the verified repayment history." : "Policy checks reflect the latest verified evidence.",
     evidenceRoot: String(evidenceRoot),
     decisionHash,
     reserveTransactionHash,
