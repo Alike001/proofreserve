@@ -83,10 +83,9 @@ function LandingPage({snapshot, network, onOpenApp}: {snapshot: DashboardSnapsho
 
 function LandingHeader({onOpenApp}: {onOpenApp: () => void}) {
   const links = [
-    ["Product", "product"],
-    ["How it protects", "how-it-protects"],
-    ["Live evidence", "live-evidence"],
-    ["Developers", "developers"]
+    ["How it works", "how-it-protects"],
+    ["Live proof", "live-evidence"],
+    ["For pool managers", "developers"]
   ];
 
   return (
@@ -96,8 +95,7 @@ function LandingHeader({onOpenApp}: {onOpenApp: () => void}) {
         <nav className="landing-nav" aria-label="Primary navigation">
           {links.map(([label, target]) => <a href={`#${target}`} key={target}>{label}</a>)}
         </nav>
-        <span className="built-on">Built on Creditcoin</span>
-        <button className="primary-button header-cta" type="button" onClick={onOpenApp}>Open app <ArrowIcon /></button>
+        <button className="primary-button header-cta" type="button" onClick={onOpenApp}>Open live app <ArrowIcon /></button>
       </div>
     </header>
   );
@@ -114,15 +112,15 @@ function LiquidityGateHero({snapshot, network, onOpenApp}: {snapshot: DashboardS
       <div className="gate-grid" aria-hidden="true" />
       <div className="landing-shell gate-hero__inner">
         <div className="gate-copy">
-          <h1>A lending pool<br />that knows when<br /><em>to stop lending.</em></h1>
-          <p>ProofReserve watches verified repayments on other chains. When related borrowers fall behind, it protects more of the pool on Creditcoin—before losses spread.</p>
+          <h1>Lending pools<br />that react before<br /><em>losses spread.</em></h1>
+          <p>ProofReserve turns verified repayments from other chains into enforceable lending limits on Creditcoin.</p>
+          <p className="gate-thesis">Attestcoin proves the facts. AI reads the pattern. The contract controls the money.</p>
           <div className="gate-actions">
-            <button className="primary-button" type="button" onClick={onOpenApp}>Open the protected pool <ArrowIcon /></button>
-            <a className="underlined-link" href="#live-evidence">See why 70 prUSD was blocked <ArrowIcon /></a>
+            <button className="primary-button" type="button" onClick={onOpenApp}>Try the live decision <ArrowIcon /></button>
+            <a className="underlined-link" href="https://creditcoin-testnet.blockscout.com/tx/0xfc25a12816d9967db8c414832c0f0771e4fd7ae013d055bc586ef39c7fc8c83e" target="_blank" rel="noreferrer">View on-chain proof <ExternalIcon /></a>
           </div>
           <div className="trust-line">
             <span><i className={`trust-dot trust-dot--${network}`} />Live on Creditcoin CC3 Testnet</span>
-            <span><i className="trust-dot trust-dot--attest" />Cross-chain facts verified by Attestcoin</span>
           </div>
         </div>
         <LiquidityGate snapshot={snapshot} />
@@ -133,21 +131,31 @@ function LiquidityGateHero({snapshot, network, onOpenApp}: {snapshot: DashboardS
 
 function LiquidityGate({snapshot}: {snapshot: DashboardSnapshot}) {
   return (
-    <div className="liquidity-gate" aria-label="A 100 prUSD pool changes from 10 protected and 90 lendable to 40 protected and 60 lendable after verified late repayments, blocking a 70 prUSD request">
-      <div className="gate-orbit" />
-      <div className="gate-topline"><strong>100 prUSD pool</strong><span>Same pool. Smarter protection.</span></div>
-      <AllocationRail label="NORMAL" protectedAmount={snapshot.previousReservePercent} lendable={snapshot.previousLendable} />
-      <div className="verified-facts">
-        <span className="chain-node chain-node--ethereum">◆</span>
-        <span className="chain-node chain-node--attest"><EvidenceIcon /></span>
-        <div><strong>{snapshot.lateCount} verified late repayments</strong><small>from Ethereum via Attestcoin</small></div>
+    <div className="liquidity-gate" aria-label="Two late repayments on Ethereum are verified by Attestcoin, interpreted by AI, and cause a Creditcoin contract to protect 40 prUSD and block a 70 prUSD loan">
+      <div className="gate-signal-flow">
+        <div className="signal-step">
+          <span className="signal-icon signal-icon--ethereum">◆</span>
+          <div><small>Ethereum Sepolia</small><strong>{snapshot.lateCount} late repayments</strong></div>
+        </div>
+        <ArrowIcon />
+        <div className="signal-step">
+          <span className="signal-icon"><EvidenceIcon /></span>
+          <div><small>Attestcoin</small><strong>Facts verified</strong></div>
+        </div>
+        <ArrowIcon />
+        <div className="signal-step signal-step--risk">
+          <span className="signal-icon"><RiskIcon /></span>
+          <div><small>AI recommends</small><strong>{snapshot.reservePercent}% reserve</strong></div>
+        </div>
       </div>
-      <div className="gate-connector" aria-hidden="true"><i /></div>
-      <AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={snapshot.lendable} stressed />
-      <div className="blocked-request">
-        <div><strong>{snapshot.blockedRequest} <small>prUSD request</small></strong><span><i /></span></div>
-        <b>×</b>
-        <p><strong>BLOCKED BY CONTRACT</strong><small>Insufficient lendable liquidity</small></p>
+      <div className="gate-pool">
+        <header><span><b aria-hidden="true">C</b>Creditcoin pool</span><strong>100 prUSD managed</strong></header>
+        <AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={snapshot.lendable} stressed />
+      </div>
+      <div className="gate-blocked">
+        <div><span>{snapshot.blockedRequest} prUSD request</span><i /></div>
+        <b aria-hidden="true">×</b>
+        <p><strong>BLOCKED BY CONTRACT</strong><small>The request exceeds the {formatNumber(snapshot.lendable)} prUSD lending limit.</small></p>
       </div>
     </div>
   );
@@ -172,8 +180,8 @@ function ProofFlow({snapshot, onOpenApp}: {snapshot: DashboardSnapshot; onOpenAp
   return (
     <section className="proof-flow" id="how-it-protects">
       <div className="landing-shell">
-        <h2>One fact. One proof. One financial response.</h2>
-        <p className="section-lead">A verified cause-and-effect path replaces the private risk feed a pool would normally have to trust.</p>
+        <h2>Three layers. One enforceable decision.</h2>
+        <p className="section-lead">The source fact, the interpretation, and the financial action remain independently inspectable.</p>
         <div className="flow-rail">
           <FlowStage number="1" title="Repayment fact" accent="blue">
             <p>Two related borrowers miss their repayment deadlines on Ethereum Sepolia.</p>
@@ -281,67 +289,65 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
   }
 
   const liveLendable = managerLendable ?? snapshot.lendable;
-  const currentOutcome = comparison?.current.outcome ?? (Number(amount) <= liveLendable ? "ALLOWED" : "BLOCKED");
-  const currentReason = comparison?.current.reason ?? (currentOutcome === "BLOCKED" ? `Only ${formatNumber(liveLendable)} prUSD is available to lend.` : "This request fits inside current lendable capacity.");
+  const requestedAmount = Number(amount) || 0;
+  const currentOutcome = comparison?.current.outcome ?? (requestedAmount <= liveLendable ? "ALLOWED" : "BLOCKED");
+  const currentReason = currentOutcome === "BLOCKED"
+    ? `The request is ${formatNumber(Math.max(0, requestedAmount - liveLendable))} prUSD above the pool's current lending limit.`
+    : `The request fits inside the pool's ${formatNumber(liveLendable)} prUSD lending limit.`;
 
   return (
     <div className="pool-app">
       <a className="skip-link" href="#pool-main">Skip to pool</a>
-      <aside className="app-sidebar">
+      <header className="app-topbar">
         <Brand button onClick={onHome} />
         <nav aria-label="Product navigation">
-          <a className="is-active" href="#overview"><PoolNavIcon kind="overview" />Overview</a>
-          <a href="#loan-desk"><PoolNavIcon kind="loan" />Loan desk</a>
-          <a href="#evidence"><PoolNavIcon kind="evidence" />Evidence</a>
-          <a href="#decision"><PoolNavIcon kind="decision" />Decision</a>
-          <a href="#manager"><PoolNavIcon kind="manager" />Pool manager</a>
-          <a href="#activity"><PoolNavIcon kind="activity" />Activity</a>
-          <a href="https://github.com/Alike001/proofreserve/blob/main/docs/product-spec.md" target="_blank" rel="noreferrer"><PoolNavIcon kind="integration" />Integration</a>
+          <a className="is-active" href="#overview">Pool</a>
+          <a href="#evidence">Evidence</a>
+          <a href="#decision">Decision</a>
+          <a href="#activity">Activity</a>
         </nav>
-        <div className="app-sidebar__bottom"><a href="https://github.com/Alike001/proofreserve#readme" target="_blank" rel="noreferrer">Documentation <ExternalIcon /></a><a href="https://github.com/Alike001/proofreserve" target="_blank" rel="noreferrer">GitHub <ExternalIcon /></a></div>
-      </aside>
-      <header className="app-topbar">
-        <button className="mobile-home" type="button" onClick={onHome}><BrandMarkOnly />ProofReserve</button>
-        <span className={`app-network app-network--${network}`}><i />Creditcoin CC3</span>
-        <button className="wallet-button" type="button" onClick={() => document.getElementById("manager")?.scrollIntoView({behavior: "smooth"})}>Open manager</button>
+        <span className={`app-network app-network--${network}`}><i />Live on Creditcoin CC3</span>
+        <button className="wallet-button" type="button" onClick={() => document.getElementById("manager")?.scrollIntoView({behavior: "smooth"})}>Manage pool <ArrowIcon /></button>
       </header>
       <main className="pool-main" id="pool-main">
-        <section className="pool-overview" id="overview">
-          <div className="pool-title"><div><h1>Protected pool</h1><p>Live reserve enforcement from verified cross-chain repayment facts.</p></div><div className="pool-status"><span>{snapshot.regime}</span><strong>{formatNumber(snapshot.reservePercent)}% <small>protected</small></strong><small>Updated on Creditcoin CC3</small></div></div>
-          <div className="managed-capacity"><span>100 prUSD managed</span><AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={liveLendable} stressed /></div>
-        </section>
-
-        <div className="pool-workspace">
-          <form className="request-panel" id="loan-desk" onSubmit={(event) => void checkCapacity(event)}>
-            <h2>Request liquidity</h2><p>Check whether this amount can be borrowed from the pool.</p>
-            <label htmlFor="loan-amount">Amount</label>
+        <div className="decision-workspace" id="overview">
+          <section className="decision-panel decision-panel--request">
+            <header className="decision-heading">
+              <div><h1>Can this pool<br /><em>fund the loan?</em></h1><p>Test a request against the reserve enforced by the Creditcoin contract.</p></div>
+              <span>{snapshot.regime}</span>
+            </header>
+            <div className="managed-capacity"><span>100 prUSD managed</span><AllocationRail label={snapshot.regime} protectedAmount={snapshot.reservePercent} lendable={liveLendable} stressed /></div>
+            <form className="request-panel" id="loan-desk" onSubmit={(event) => void checkCapacity(event)}>
+            <label htmlFor="loan-amount">Loan request</label>
             <div className="app-amount"><input id="loan-amount" type="number" min="0.000001" max="1000000" step="any" value={amount} onChange={(event) => {setAmount(event.target.value); setComparison(null); setCapacityState("idle");}} /><span>prUSD</span></div>
             <div className="app-presets">{[50, 70, 95].map((value) => <button className={amount === String(value) ? "is-selected" : ""} type="button" onClick={() => chooseAmount(value)} key={value}>{value}</button>)}</div>
-            <button className="primary-button request-submit" type="submit" disabled={capacityState === "testing" || network === "error" || network === "preview"}>{capacityState === "testing" ? "Checking CC3…" : "Check contract capacity"}<ArrowIcon /></button>
-            <div className={`contract-result contract-result--${currentOutcome.toLowerCase()}`}><RiskIcon /><div><strong>{currentOutcome} {capacityState === "complete" ? "BY CONTRACT" : "AT CURRENT CAPACITY"}</strong><p>{currentReason}</p></div></div>
+            <button className="primary-button request-submit" type="submit" disabled={capacityState === "testing" || network === "error" || network === "preview"}>{capacityState === "testing" ? "Checking Creditcoin…" : "Check live capacity"}<ArrowIcon /></button>
+            <div className={`contract-result contract-result--${currentOutcome.toLowerCase()}`}><RiskIcon /><div><strong>{currentOutcome} BY CONTRACT</strong><p>{currentReason}</p></div></div>
             {capacityMessage && <p className="form-message" role="alert">{capacityMessage}</p>}
-            <a className="underlined-link compare-link" href="#state-comparison">Compare with NORMAL state <ArrowIcon /></a>
           </form>
+          </section>
 
-          <div className="pool-detail">
+          <div className="pool-detail decision-panel decision-panel--proof">
             <section className="state-comparison" id="state-comparison">
-              <h2>Pool state comparison</h2>
-              <ComparisonRail label="NORMAL" block={comparison?.normal.blockNumber} reserve={comparison?.normal.reservePercent ?? 10} lendable={comparison?.normal.lendable ?? 90} outcome={comparison?.normal.outcome ?? (Number(amount) <= 90 ? "ALLOWED" : "BLOCKED")} amount={Number(amount) || 0} />
-              <ComparisonRail label={`CURRENT: ${snapshot.regime}`} block={comparison?.current.blockNumber} reserve={comparison?.current.reservePercent ?? snapshot.reservePercent} lendable={comparison?.current.lendable ?? liveLendable} outcome={currentOutcome} amount={Number(amount) || 0} current />
+              <h2>Pool capacity comparison</h2>
+              <ComparisonRail label="Before risk signal" block={comparison?.normal.blockNumber} reserve={comparison?.normal.reservePercent ?? 10} lendable={comparison?.normal.lendable ?? 90} outcome={comparison?.normal.outcome ?? (requestedAmount <= 90 ? "ALLOWED" : "BLOCKED")} amount={requestedAmount} />
+              <ComparisonRail label="Current" block={comparison?.current.blockNumber} reserve={comparison?.current.reservePercent ?? snapshot.reservePercent} lendable={comparison?.current.lendable ?? liveLendable} outcome={currentOutcome} amount={requestedAmount} current />
+              <p className="capacity-explainer"><span aria-hidden="true">i</span>The pool's lending limit decreased from 90 to {formatNumber(liveLendable)} prUSD after new cross-chain evidence was verified.</p>
             </section>
             <section className="evidence-path" id="evidence">
-              <h2>Why the reserve changed</h2>
+              <header className="evidence-heading"><div><h2>Why the limit changed</h2><p>Verified facts from Ethereum changed a real lending limit on Creditcoin.</p></div><a href="https://github.com/Alike001/proofreserve/blob/main/docs/ai-sensitive-evidence.md" target="_blank" rel="noreferrer">Inspect proof <ExternalIcon /></a></header>
               <div className="evidence-stages">
                 <EvidenceStep icon={<EvidenceIcon />} title={`${snapshot.lateCount} late repayments`} meta="Ethereum Sepolia" href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" />
                 <EvidenceStep icon={<CheckIcon />} title="Attestcoin proof" meta="Verified on CC3" href="https://github.com/Alike001/proofreserve/blob/main/docs/testnet-evidence.md" />
                 <EvidenceStep icon={<RiskIcon />} title={`Gemini: ${snapshot.regime}`} meta={`${snapshot.confidencePercent}% confidence`} href="https://github.com/Alike001/proofreserve/blob/main/docs/build-slice-03.md" />
                 <EvidenceStep icon={<LockIcon />} title={`${snapshot.reservePercent}% enforced`} meta="ReserveController" href={transactionUrl || "https://github.com/Alike001/proofreserve/blob/main/docs/ai-sensitive-evidence.md"} />
               </div>
-              {snapshot.aiComparison && <WhyAiMattered snapshot={snapshot} />}
-              <div className="authority-note" id="decision"><span><RiskIcon /><b>AI recommends</b><small>Gemini selects only a policy-approved risk regime.</small></span><span><LockIcon /><b>Smart contract has final authority</b><small>The ReserveController validates and enforces the result.</small></span></div>
             </section>
+            <div className="authority-note" id="decision"><span><RiskIcon /><b>AI recommends</b><small>Gemini selects only a policy-approved risk regime.</small></span><span><LockIcon /><b>Smart contract has final authority</b><small>The ReserveController validates and enforces the result.</small></span></div>
           </div>
         </div>
+
+        {snapshot.aiComparison && <section className="decision-detail"><WhyAiMattered snapshot={snapshot} /></section>}
 
         <ManagerDesk onStateChange={(state) => {setManagerLendable(state.lendable); setComparison(null); setCapacityState("idle");}} />
         <section className="enforcement-record" id="activity"><h2>Recent enforcement record</h2><div><span className="record-icon">↑</span><strong>Reserve increased</strong><span>CC3 Testnet</span><span>Epoch {snapshot.epoch}</span><code>{shortHash(snapshot.reserveTransactionHash || snapshot.decisionHash)}</code>{transactionUrl ? <a href={transactionUrl} target="_blank" rel="noreferrer">View transaction <ExternalIcon /></a> : <a href="https://github.com/Alike001/proofreserve/blob/main/docs/ai-sensitive-evidence.md" target="_blank" rel="noreferrer">View evidence <ExternalIcon /></a>}</div></section>
@@ -392,18 +398,4 @@ function ComparisonRail({label, block, reserve, lendable, outcome, amount, curre
 
 function EvidenceStep({icon, title, meta, href}: {icon: ReactNode; title: string; meta: string; href: string}) {
   return <a href={href} target="_blank" rel="noreferrer"><span>{icon}</span><strong>{title}</strong><small>{meta}</small><ExternalIcon /></a>;
-}
-
-function PoolNavIcon({kind}: {kind: string}) {
-  if (kind === "evidence") return <EvidenceIcon />;
-  if (kind === "decision") return <LockIcon />;
-  if (kind === "integration") return <ExternalIcon />;
-  if (kind === "activity") return <span className="nav-clock">◷</span>;
-  if (kind === "manager") return <LockIcon />;
-  if (kind === "loan") return <span className="nav-doc">▤</span>;
-  return <span className="nav-home">⌂</span>;
-}
-
-function BrandMarkOnly() {
-  return <span className="brand-mark" aria-hidden="true"><i /><i /></span>;
 }
