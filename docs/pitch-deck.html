@@ -119,7 +119,7 @@
         <p><strong>60 prUSD</strong> lendable<br/>70 prUSD request: <strong class="danger">BLOCKED</strong></p>
       </div>
     </div>
-    <p class="lead" style="margin-top:24px">Four healthy payments plus two related late payments produced a real, policy-bounded reserve change on Creditcoin CC3.</p>
+    <p class="lead" style="margin-top:24px">Four small settled payments plus two high-value late payments produced a real, policy-bounded reserve change on Creditcoin CC3.</p>
   </section>
 
   <section class="slide">
@@ -137,10 +137,10 @@
     <p class="eyebrow">Live architecture</p>
     <h2>One auditable path from source receipt to lending capacity.</h2>
     <div class="pipeline">
-      <div class="node"><div class="number">1 · SEPOLIA</div><h3>Loan events</h3><p>Four settled and two related late payments, plus a checkpoint.</p><span class="pill">REAL TXS</span></div>
+      <div class="node"><div class="number">1 · SEPOLIA</div><h3>Loan events</h3><p>Four small settled and two high-value late payments, plus a checkpoint.</p><span class="pill">REAL TXS</span></div>
       <div class="node"><div class="number">2 · ATTESTCOIN</div><h3>Proven receipts</h3><p>Inclusion and continuity proofs are finalized through the native CC3 verifier.</p><span class="pill">7 PROOFS</span></div>
       <div class="node"><div class="number">3 · EVIDENCE</div><h3>Typed facts</h3><p>Emitter, event, borrower, group, sequence, epoch, and replay state are checked.</p><span class="pill">ROOT-BOUND</span></div>
-      <div class="node"><div class="number">4 · GEMINI</div><h3>Bounded regime</h3><p>Structured output selects NORMAL, WATCH, STRESS, or CRISIS.</p><span class="pill">85% STRESS</span></div>
+      <div class="node"><div class="number">4 · GEMINI</div><h3>Bounded regime</h3><p>Count-only rules return WATCH; value severity raises the recommendation.</p><span class="pill">82% STRESS</span></div>
       <div class="node"><div class="number">5 · CREDITCOIN</div><h3>Enforcement</h3><p>Policy checks raise the reserve and the pool rejects excess lending.</p><span class="pill">40% LOCKED</span></div>
     </div>
   </section>
@@ -200,9 +200,9 @@
           <div class="check"><i>✓</i><span>Gemini inference mode recorded</span></div>
           <div class="check"><i>✓</i><span>40% reserve enforced on Creditcoin</span></div>
           <div class="check"><i>✓</i><span>70 prUSD capacity rejection reproduced</span></div>
-          <div class="check"><i>✓</i><span>25 Solidity + 17 worker/risk tests</span></div>
+          <div class="check"><i>✓</i><span>46 automated tests + 64 live checks</span></div>
         </div>
-        <div class="hash">CC3 TX<br/>0x300b1ad4e7f51da215b0630f370a73bef030c0e8c1e26ed80192e2cd8da77126</div>
+        <div class="hash">CANONICAL AI-SENSITIVE CC3 TX<br/>0xfc25a12816d9967db8c414832c0f0771e4fd7ae013d055bc586ef39c7fc8c83e</div>
       </div>
     </div>
   </section>

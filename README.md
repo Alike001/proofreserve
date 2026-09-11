@@ -82,7 +82,7 @@ pnpm check
 pnpm preflight:testnet
 ```
 
-Current local verification: 25 Solidity tests, one worker restart/idempotence test, and sixteen risk-engine tests pass; all TypeScript passes strict type-checking.
+Current local verification: 25 Solidity tests, one worker restart/idempotence test, sixteen risk-engine tests, and four pool-manager application tests pass; all TypeScript passes strict type-checking.
 
 Live AI inference uses `gemini-3.8-flash` through the Gemini Developer API and requires a server-side `GEMINI_API_KEY`. The selected model is available on Google's free tier, so a paid AI account is not required within current quotas. HTTP 429 or temporary model failures cause the risk engine to fail safely to its deterministic baseline; a live Gemini result is still required for the judged AI-sensitive path.
 
