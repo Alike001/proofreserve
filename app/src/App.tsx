@@ -12,6 +12,7 @@ import {
 } from "./data";
 import {ArrowIcon, CheckIcon, EvidenceIcon, ExternalIcon, LockIcon, RiskIcon} from "./icons";
 import {ManagerDesk} from "./components/ManagerDesk";
+import {ProtectionCycle} from "./components/ProtectionCycle";
 
 type NetworkState = "loading" | "live" | "preview" | "error";
 type CapacityState = "idle" | "testing" | "complete" | "error";
@@ -326,7 +327,7 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
       <header className="app-topbar">
         <Brand button onClick={onHome} />
         <nav aria-label="Product navigation">
-          <a className="is-active" href="#overview">Pool</a>
+          <a className="is-active" href="#protection-cycle">Pool</a>
           <a href="#evidence">Evidence</a>
           <a href="#decision">Decision</a>
           <a href="#activity">Activity</a>
@@ -335,6 +336,11 @@ function PoolApplication({snapshot, network, onHome}: {snapshot: DashboardSnapsh
         <button className="wallet-button" type="button" onClick={() => document.getElementById("manager")?.scrollIntoView({behavior: "smooth"})}>Manage pool <ArrowIcon /></button>
       </header>
       <main className="pool-main" id="pool-main">
+        <ProtectionCycle
+          snapshot={snapshot}
+          network={network}
+          onOperatePool={() => document.getElementById("manager")?.scrollIntoView({behavior: "smooth"})}
+        />
         <div className="decision-workspace" id="overview">
           <section className="decision-panel decision-panel--request">
             <header className="decision-heading">

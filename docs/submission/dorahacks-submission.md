@@ -46,6 +46,7 @@ The product direction is reusable risk infrastructure for Creditcoin lending ope
 - A 100 prUSD test pool whose reserve changed from 10% to 40%.
 - A contract-level capacity check showing 70 prUSD allowed before and rejected after.
 - A permissioned pool-manager workflow for preflight, commitment, CC3 receipt inspection, and safe cancellation.
+- A no-wallet guided replay that re-queries the historical and current pool states, then exposes every Sepolia, Attestcoin, Gemini, and Creditcoin receipt behind the decision.
 - A no-key `pnpm verify:live` command with 64 public cross-chain and contract checks.
 - A public responsive dashboard that reads the live CC3 contracts.
 - Restart/idempotence, policy-boundary, signature, freshness, replay, and reconciliation tests.
@@ -85,11 +86,11 @@ Ethereum Sepolia SourceLoanBook
 ## 90-second demo outline
 
 1. **0:00–0:10 — Problem:** A Creditcoin pool cannot safely react to repayment trouble on another chain if it must trust a private API.
-2. **0:10–0:25 — Normal state:** Show 100 prUSD managed, 10% protected, 90 lendable, and a 70 prUSD request allowed.
-3. **0:22–0:38 — Proven facts:** Show four settled payments worth 40 and two late payments worth 500, then the Attestcoin proof manifest and CC3 checkpoint.
-4. **0:38–0:52 — Why AI matters:** Show count-only `WATCH` beside Gemini `STRESS` at 82% confidence. Explain that AI cannot move money.
-5. **0:52–1:05 — Enforcement:** Show the canonical CC3 transaction, 40% reserve, 60 lendable, and the same 70 prUSD request blocked by the contract.
-6. **1:05–1:20 — Product action:** Connect the owner wallet, preflight an allowed 50 prUSD commitment, show the CC3 receipt, then cancel to restore capacity.
+2. **0:10–0:25 — Start the replay:** Press “Replay the protection cycle.” Show the public contract query returning 90 lendable and the 70 prUSD request allowed at the pinned NORMAL block.
+3. **0:25–0:38 — Proven facts:** Let the guided flow reach four settled payments worth 40, two late payments worth 500, and their Attestcoin acceptance on CC3.
+4. **0:38–0:52 — Why AI matters:** Let the replay expose count-only `WATCH` beside Gemini `STRESS` at 82% confidence. Explain that AI cannot move money.
+5. **0:52–1:05 — Enforcement:** Finish the replay at the canonical CC3 transaction, 40% reserve, 60 lendable, and the same 70 prUSD request blocked by the contract.
+6. **1:05–1:20 — Product action:** Test another amount in the capacity desk, then briefly show the owner-gated manager workflow. Use the prepared transaction instead of waiting for a wallet confirmation if recording time is tight.
 7. **1:20–1:30 — Close:** “Attestcoin supplies proven facts, AI interprets them, and Creditcoin contracts retain final authority.”
 
 ## Reproduction and testing

@@ -12,7 +12,9 @@ A pool with 100 test tokens may normally protect 10 and lend 90. When several re
 
 The complete MVP is live on Ethereum Sepolia and Creditcoin CC3 Testnet. Fourteen source transactions across two evidence epochs have been proven through Attestcoin and accepted on Creditcoin. The first epoch proves the 10% to 40% reserve consequence. The second proves AI necessity: deterministic rules return `WATCH`, while Gemini compares the value severity across the verified facts and recommends `STRESS` with 82% confidence. The Creditcoin controller accepted that exact block-pinned result. See the [initial testnet evidence](docs/testnet-evidence.md) and [AI-sensitive evidence](docs/ai-sensitive-evidence.md) for the complete public trails.
 
-The live product includes a no-wallet capacity test. Enter a proposed loan and the browser performs two read-only simulations of the deployed pool's `commitLoan` function: at the last normal-reserve block and at the latest block. Try 50 prUSD (allowed in both states), 70 prUSD (allowed before and blocked now), and 95 prUSD (blocked in both states).
+The live product opens with a no-wallet verified replay of the complete protection cycle. It re-queries the deployed pool at the pinned normal-reserve block and the latest Creditcoin block, then walks through the public Sepolia repayment receipt, Attestcoin acceptance, reviewed Gemini artifact, Creditcoin enforcement transaction, and final contract rejection. The interface explicitly distinguishes this public replay from producing a new signed decision, so no wallet key or model key is exposed in the browser.
+
+The capacity desk also accepts any proposed loan amount and performs two read-only simulations of the deployed pool's `commitLoan` function: at the last normal-reserve block and at the latest block. Try 50 prUSD (allowed in both states), 70 prUSD (allowed before and blocked now), and 95 prUSD (blocked in both states).
 
 The pool-manager desk adds a permissioned write workflow for the deployed pool. The connected wallet must match the pool owner. It switches or adds Creditcoin CC3, validates the borrower and amount, performs a live `commitLoan` preflight, asks the wallet to sign only after that check passes, waits for the CC3 receipt, and exposes a cancellation action that restores capacity. A commitment reserves lending capacity but does not transfer pool funds.
 
@@ -82,7 +84,7 @@ pnpm check
 pnpm preflight:testnet
 ```
 
-Current local verification: 25 Solidity tests, one worker restart/idempotence test, sixteen risk-engine tests, and four pool-manager application tests pass; all TypeScript passes strict type-checking.
+Current local verification: 25 Solidity tests, one worker restart/idempotence test, sixteen risk-engine tests, and seven application tests pass; all TypeScript passes strict type-checking.
 
 Live AI inference uses `gemini-3.8-flash` through the Gemini Developer API and requires a server-side `GEMINI_API_KEY`. The selected model is available on Google's free tier, so a paid AI account is not required within current quotas. HTTP 429 or temporary model failures cause the risk engine to fail safely to its deterministic baseline; a live Gemini result is still required for the judged AI-sensitive path.
 
