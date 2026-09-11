@@ -180,35 +180,60 @@ function ProofFlow({snapshot, onOpenApp}: {snapshot: DashboardSnapshot; onOpenAp
   return (
     <section className="proof-flow" id="how-it-protects">
       <div className="landing-shell">
-        <h2>Three layers. One enforceable decision.</h2>
-        <p className="section-lead">The source fact, the interpretation, and the financial action remain independently inspectable.</p>
-        <div className="flow-rail">
-          <FlowStage number="1" title="Repayment fact" accent="blue">
-            <p>Two related borrowers miss their repayment deadlines on Ethereum Sepolia.</p>
-            <div className="fact-rows"><FactRow label="Borrower 01" status="LATE" /><FactRow label="Borrower 02" status="LATE" /></div>
-          </FlowStage>
-          <FlowStage number="2" title="Attestcoin proof" accent="violet">
-            <p>Attestcoin verifies the source transactions and delivers the facts to Creditcoin.</p>
-            <div className="chain-path"><span>Ethereum</span><b>→</b><span>Attestcoin</span><b>→</b><span>CC3</span></div>
-            <span className="verified-status"><CheckIcon /> Proof verified</span>
-          </FlowStage>
-          <FlowStage number="3" title="Contract response" accent="mint">
-            <p>The ReserveController moves the pool from NORMAL to {snapshot.regime}.</p>
-            <div className="mini-shift"><span>10 → {formatNumber(snapshot.reservePercent)}% protected</span><strong>{snapshot.blockedRequest} prUSD BLOCKED</strong></div>
-          </FlowStage>
+        <div className="proof-flow__heading">
+          <div>
+            <span className="flow-kicker">What just happened?</span>
+            <h2>One risk pattern.<br /><em>One safer lending limit.</em></h2>
+          </div>
+          <p>The facts, proof, AI recommendation, and contract action stay separate and inspectable. No single service gets to invent the evidence and move the money.</p>
+        </div>
+
+        <div className="decision-story">
+          <article className="decision-impact" aria-label={`${snapshot.blockedRequest} prUSD was allowed before the reserve change and is blocked now`}>
+            <header>
+              <span>Same loan request</span>
+              <strong>{snapshot.blockedRequest}<small>prUSD</small></strong>
+            </header>
+            <div className="capacity-case capacity-case--before">
+              <div><span>Before · NORMAL</span><strong>ALLOWED</strong></div>
+              <p>90 prUSD available to lend</p>
+              <div className="capacity-bar"><i /></div>
+            </div>
+            <div className="capacity-case capacity-case--after">
+              <div><span>Now · {snapshot.regime}</span><strong>BLOCKED</strong></div>
+              <p>{formatNumber(snapshot.lendable)} prUSD available to lend</p>
+              <div className="capacity-bar"><i /></div>
+            </div>
+            <footer>The request did not change. The verified risk did.</footer>
+          </article>
+
+          <ol className="decision-ledger" aria-label="How ProofReserve reaches an enforceable decision">
+            <li>
+              <span className="decision-ledger__number">01</span>
+              <div><small>Ethereum Sepolia</small><h3>Repayment facts happen</h3><p>Four small payments settle. Two much larger repayments turn late.</p></div>
+              <strong>40 paid · 500 late</strong>
+            </li>
+            <li>
+              <span className="decision-ledger__number">02</span>
+              <div><small>Attestcoin Protocol</small><h3>The receipts are proven</h3><p>Cryptographic proofs deliver the exact source transactions to Creditcoin.</p></div>
+              <strong>7 proofs verified</strong>
+            </li>
+            <li>
+              <span className="decision-ledger__number">03</span>
+              <div><small>Bounded Gemini assessment</small><h3>AI reads the combined pattern</h3><p>The simple baseline says WATCH. Gemini recognizes the value severity and recommends STRESS.</p></div>
+              <strong>WATCH → {snapshot.regime} · {snapshot.confidencePercent}%</strong>
+            </li>
+            <li>
+              <span className="decision-ledger__number">04</span>
+              <div><small>Creditcoin smart contract</small><h3>The financial limit is enforced</h3><p>The contract validates the recommendation, protects more liquidity, and rejects an unsafe request.</p></div>
+              <strong>10 → {formatNumber(snapshot.reservePercent)}% protected</strong>
+            </li>
+          </ol>
         </div>
         <button className="underlined-link proof-flow__link" type="button" onClick={onOpenApp}>Inspect the live evidence <ArrowIcon /></button>
       </div>
     </section>
   );
-}
-
-function FlowStage({number, title, accent, children}: {number: string; title: string; accent: string; children: ReactNode}) {
-  return <article className={`flow-stage flow-stage--${accent}`}><header><span>{number}</span><h3>{title}</h3></header>{children}</article>;
-}
-
-function FactRow({label, status}: {label: string; status: string}) {
-  return <div className="fact-row"><span>{label}</span><strong>{status}</strong></div>;
 }
 
 function ProductSection({snapshot, network, onOpenApp}: {snapshot: DashboardSnapshot; network: NetworkState; onOpenApp: () => void}) {
