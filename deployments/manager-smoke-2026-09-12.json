@@ -1,0 +1,15 @@
+{
+  "chainId": 102031,
+  "pool": "0x8305921B241cAEC35750d9532B22210802e9714D",
+  "owner": "0x7a490B6b4079E90C228d5CABb58bbedc9a51312b",
+  "borrower": "0x000000000000000000000000000000000000B001",
+  "amountPrUsd": "1",
+  "beforeLendablePrUsd": "60.0",
+  "commitTransaction": "0x4bbdd4bc472aad5d3f407ab079878ff27ad55cfd05d34c2fc3c6409e45bda272",
+  "commitBlock": 5475303,
+  "afterCommitLendablePrUsd": "59.0",
+  "cancelTransaction": "0x99fbfdc3858f4cc7c8c9b2a97e0f500d8fa591b5c363493c8337befbedc6ea69",
+  "cancelBlock": 5475304,
+  "afterCancelLendablePrUsd": "60.0",
+  "remainingBorrowerCommitmentPrUsd": "0.0"
+}

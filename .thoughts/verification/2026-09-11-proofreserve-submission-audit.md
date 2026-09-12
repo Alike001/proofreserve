@@ -94,8 +94,7 @@ The submission is not complete until the participant supplies and submits the re
 
 ### High-value follow-ups
 
-1. Manually exercise the owner-wallet manager flow once in the production site, then cancel the test commitment and retain the transaction receipt.
-2. Add focused contract tests for uncovered branches, especially evidence decoder/rejection paths and pool/source edge cases. Current branch coverage is 28.09%.
+1. Add focused contract tests for uncovered branches, especially evidence decoder/rejection paths and pool/source edge cases. Current branch coverage is 28.09%.
 
 ### Acceptable non-blocking risks
 
@@ -110,14 +109,14 @@ The submission is not complete until the participant supplies and submits the re
 1. Record and upload the 90-second demo using the prepared script.
 2. Add the video URL to the submission draft and README.
 3. Supply truthful participant/team and eligibility fields.
-4. Perform a final production owner-wallet smoke test and cancel the commitment.
-5. Paste the prepared project fields into DoraHacks, review every URL in an incognito window, and submit.
-6. Optional after submission readiness: add branch-focused tests, CI, static analysis, and bundle splitting.
+4. Paste the prepared project fields into DoraHacks, review every URL in an incognito window, and submit.
+5. Optional after submission readiness: add branch-focused tests, CI, static analysis, and bundle splitting.
 
 ## Evidence Log
 
 - Audited commit: `13f82279940c7fc0b86b1beae59e33cdf73bf48c`
 - Updated production screenshots: guided replay completed at 1536×1024 and 390×844 with no console warnings/errors or horizontal overflow
+- Owner-wallet smoke: commit `0x4bbdd4bc472aad5d3f407ab079878ff27ad55cfd05d34c2fc3c6409e45bda272` reduced lendable capacity 60 → 59; cancellation `0x99fbfdc3858f4cc7c8c9b2a97e0f500d8fa591b5c363493c8337befbedc6ea69` restored 59 → 60 with zero remaining borrower commitment
 - Public product: `https://proofreserve.vercel.app/app`
 - Repository: `https://github.com/Alike001/proofreserve`
 - Canonical enforcement: `0xfc25a12816d9967db8c414832c0f0771e4fd7ae013d055bc586ef39c7fc8c83e`

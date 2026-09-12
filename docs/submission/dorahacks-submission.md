@@ -46,6 +46,7 @@ The product direction is reusable risk infrastructure for Creditcoin lending ope
 - A 100 prUSD test pool whose reserve changed from 10% to 40%.
 - A contract-level capacity check showing 70 prUSD allowed before and rejected after.
 - A permissioned pool-manager workflow for preflight, commitment, CC3 receipt inspection, and safe cancellation.
+- A public manager rehearsal: [1 prUSD committed](https://creditcoin-testnet.blockscout.com/tx/0x4bbdd4bc472aad5d3f407ab079878ff27ad55cfd05d34c2fc3c6409e45bda272), then [cancelled](https://creditcoin-testnet.blockscout.com/tx/0x99fbfdc3858f4cc7c8c9b2a97e0f500d8fa591b5c363493c8337befbedc6ea69), restoring the pool to 60 lendable and zero test commitment.
 - A no-wallet guided replay that re-queries the historical and current pool states, then exposes every Sepolia, Attestcoin, Gemini, and Creditcoin receipt behind the decision.
 - A no-key `pnpm verify:live` command with 64 public cross-chain and contract checks.
 - A public responsive dashboard that reads the live CC3 contracts.

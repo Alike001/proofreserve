@@ -18,6 +18,8 @@ The capacity desk also accepts any proposed loan amount and performs two read-on
 
 The pool-manager desk adds a permissioned write workflow for the deployed pool. The connected wallet must match the pool owner. It switches or adds Creditcoin CC3, validates the borrower and amount, performs a live `commitLoan` preflight, asks the wallet to sign only after that check passes, waits for the CC3 receipt, and exposes a cancellation action that restores capacity. A commitment reserves lending capacity but does not transfer pool funds.
 
+The final production rehearsal committed 1 prUSD in [CC3 transaction `0x4bbd…a272`](https://creditcoin-testnet.blockscout.com/tx/0x4bbdd4bc472aad5d3f407ab079878ff27ad55cfd05d34c2fc3c6409e45bda272), reducing lendable capacity from 60 to 59, then cancelled it in [`0x99fb…ea69`](https://creditcoin-testnet.blockscout.com/tx/0x99fbfdc3858f4cc7c8c9b2a97e0f500d8fa591b5c363493c8337befbedc6ea69). The pool returned to 60 lendable with zero remaining test commitment. The machine-readable receipt is in [`deployments/manager-smoke-2026-09-12.json`](deployments/manager-smoke-2026-09-12.json).
+
 ![ProofReserve product landing page](docs/assets/screenshots/landing-live-desktop.png)
 
 ## Demonstration flow
